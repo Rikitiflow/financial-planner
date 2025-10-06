@@ -2993,6 +2993,7 @@
                     const filteredData = data.filter(item => item.id !== itemId);
                     
                     localStorage.setItem(dataType, JSON.stringify(filteredData));
+                    window.firebaseSync?.save?.();
                     this.showNotification(`Item deleted successfully`);
                     
                     // Refresh current tab
@@ -3249,6 +3250,7 @@
                 }
                 
                 localStorage.setItem('transactions', JSON.stringify(transactions));
+                window.firebaseSync?.save?.();
                 
                 // Update account balance
                 this.updateAccountBalance(account, type, parseFloat(amount));
@@ -3283,6 +3285,7 @@
                 const people = this.getData('people');
                 people.push(person);
                 localStorage.setItem('people', JSON.stringify(people));
+                window.firebaseSync?.save?.();
                 
                 this.showNotification('Person saved successfully');
                 this.loadTabData(this.currentTab);
@@ -3333,6 +3336,7 @@
                 }
                 
                 localStorage.setItem('accounts', JSON.stringify(accounts));
+                window.firebaseSync?.save?.();
                 
                 this.showNotification('Account saved successfully');
                 this.loadTabData(this.currentTab);
@@ -3362,6 +3366,7 @@
                 const categories = this.getData('categories');
                 categories.push(category);
                 localStorage.setItem('categories', JSON.stringify(categories));
+                window.firebaseSync?.save?.();
                 
                 this.showNotification('Category saved successfully');
                 this.loadTabData(this.currentTab);
@@ -3405,6 +3410,7 @@
                 const transfers = this.getData('transfers');
                 transfers.push(transfer);
                 localStorage.setItem('transfers', JSON.stringify(transfers));
+                window.firebaseSync?.save?.();
                 
                 this.showNotification('Transfer completed successfully');
                 this.loadTabData(this.currentTab);
@@ -3439,6 +3445,7 @@
                     }
                     
                     localStorage.setItem('accounts', JSON.stringify(accounts));
+                    window.firebaseSync?.save?.();
                 }
             }
 
@@ -3731,6 +3738,7 @@
                     
                     this.showNotification('All data has been deleted');
                     this.closeModal('settingsModal');
+                    window.firebaseSync?.save?.();
                     this.loadTabData(this.currentTab);
                 }
             }
@@ -3903,6 +3911,7 @@
                 
                 // Save to localStorage
                 localStorage.setItem('budgets', JSON.stringify(budgets));
+                window.firebaseSync?.save?.();
                     
                     // Refresh budgets to update totals
                     this.loadBudgetsData();
@@ -3945,6 +3954,7 @@
                 
                 budget.projected = parseFloat(projectedAmount) || 0;
                 localStorage.setItem('budgets', JSON.stringify(budgets));
+                window.firebaseSync?.save?.();
                 
                 // Refresh budgets
                 this.loadBudgetsData();
@@ -4428,6 +4438,7 @@
                 
                 // Save updated accounts
                 localStorage.setItem('accounts', JSON.stringify(accounts));
+                window.firebaseSync?.save?.();
                 
                 // Update the display if we're on the accounts page
                 if (this.currentTab === 'accounts') {
@@ -4590,5 +4601,98 @@
 
         console.log('✅ Financial Planner loaded');
     </script>
+
+<script type="module">
+    // Firebase SDKs (modular)
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+  
+    const firebaseConfig = {
+      apiKey: "AIzaSyC8r6olB67MWifBPVtyt72QAHIVkWhStqA",
+      authDomain: "financial-planner-bba37.firebaseapp.com",
+      projectId: "financial-planner-bba37",
+      storageBucket: "financial-planner-bba37.firebasestorage.app",
+      messagingSenderId: "1035058509819",
+      appId: "1:1035058509819:web:785dd8584f95f0d811bd5e",
+      measurementId: "G-M24XYZD0EW"
+    };
+  
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+  
+    // Utilidades
+    function getLocal(key) {
+      return JSON.parse(localStorage.getItem(key) || '[]');
+    }
+    function setLocal(key, value) {
+      localStorage.setItem(key, JSON.stringify(value || []));
+    }
+  
+    async function saveToCloud(uid) {
+      const payload = {
+        transactions: getLocal('transactions'),
+        people:       getLocal('people'),
+        accounts:     getLocal('accounts'),
+        categories:   getLocal('categories'),
+        budgets:      getLocal('budgets'),
+      };
+      await setDoc(doc(db, 'users', 'financial-planner'), payload, { merge: true });
+    }
+  
+    async function loadFromCloud(uid) {
+      const ref = doc(db, 'users', 'financial-planner');
+      const snap = await getDoc(ref);
+  
+      if (!snap.exists()) {
+        // Primera vez: si ya había datos locales (pre-GitHub), los subimos
+        const hasLocalData =
+          getLocal('transactions').length ||
+          getLocal('people').length ||
+          getLocal('accounts').length ||
+          getLocal('categories').length ||
+          getLocal('budgets').length;
+  
+        if (hasLocalData) {
+          await saveToCloud('financial-planner');
+        }
+        return;
+      }
+  
+      // Tenemos datos en la nube → sobrescribimos localStorage
+      const data = snap.data() || {};
+      setLocal('transactions', data.transactions || []);
+      setLocal('people',       data.people || []);
+      setLocal('accounts',     data.accounts || []);
+      setLocal('categories',   data.categories || []);
+      setLocal('budgets',      data.budgets || []);
+    }
+  
+    // Exponer guardado para usarlo desde tu app
+    window.firebaseSync = {
+      ready: false,
+      save: async () => {
+        if (!window.firebaseSync.ready) return;
+        await saveToCloud('financial-planner');
+      }
+    };
+  
+    // Login anónimo y bootstrap
+    signInAnonymously(auth).catch(console.error);
+  
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
+      window.firebaseSync.uid = user.uid;
+      await loadFromCloud('financial-planner');
+      window.firebaseSync.ready = true;
+
+      // Refresca la pestaña actual si la app ya está cargada
+      if (window.app?.currentTab) {
+        window.app.loadTabData(window.app.currentTab);
+      }
+    });
+  </script>
+  
 </body>
 </html>
