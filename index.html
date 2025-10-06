@@ -4606,7 +4606,7 @@
     // Firebase SDKs (modular)
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-    import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    import { getFirestore, initializeFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
   
     const firebaseConfig = {
       apiKey: "AIzaSyC8r6olB67MWifBPVtyt72QAHIVkWhStqA",
@@ -4620,7 +4620,7 @@
   
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
+    const db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true });
   
     // Utilidades
     function getLocal(key) {
