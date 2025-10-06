@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Financial Planner</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <div class="nav-left">
+                <h1 class="app-title">
+                    <i class="fas fa-chart-line"></i>
+                    Financial Planner
+                </h1>
+                <button class="nav-tab active" data-tab="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-tab" data-tab="movements">
+                    <i class="fas fa-list"></i>
+                    <span>Movimientos</span>
+                </button>
+            </div>
+            <div class="nav-right">
+                <button class="btn-icon" id="settingsBtn">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="dashboard">
+                <div class="dashboard-grid">
+                    <!-- Balance Cards -->
+                    <div class="balance-cards">
+                        <div class="balance-card income">
+                            <div class="card-header">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Ingresos</span>
+                            </div>
+                            <div class="card-amount" id="totalIncome">$0.00</div>
+                        </div>
+                        <div class="balance-card expense">
+                            <div class="card-header">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>Gastos</span>
+                            </div>
+                            <div class="card-amount" id="totalExpense">$0.00</div>
+                        </div>
+                        <div class="balance-card balance">
+                            <div class="card-header">
+                                <i class="fas fa-wallet"></i>
+                                <span>Balance</span>
+                            </div>
+                            <div class="card-amount" id="totalBalance">$0.00</div>
+                        </div>
+                    </div>
+
+                    <!-- Chart Section -->
+                    <div class="chart-section">
+                        <div class="chart-header">
+                            <h3>Gastos por Categoría</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <h3>Acciones Rápidas</h3>
+                        <div class="action-buttons">
+                            <button class="action-btn" id="addMovement">
+                                <i class="fas fa-plus"></i>
+                                <span>Añadir Movimiento</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Movements Tab -->
+            <div class="tab-content" id="movements">
+                <div class="movements-container">
+                    <div class="movements-main">
+                        <div class="movements-header">
+                            <h2>Movimientos</h2>
+                            <div class="movements-controls">
+                                <button class="btn-primary" id="createMovement">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Añadir Movimiento</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="movements-list" id="allMovementsList">
+                            <!-- Movements will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Movement Modal -->
+        <div class="modal" id="movementModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="movementModalTitle">Agregar Movimiento</h3>
+                    <button class="modal-close" id="closeMovementModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="movementForm">
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <input type="text" id="movementDescription" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Cantidad</label>
+                            <input type="number" id="movementAmount" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo</label>
+                            <div class="type-selector">
+                                <button type="button" class="type-btn income-btn active" data-type="income">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>Ingreso</span>
+                                </button>
+                                <button type="button" class="type-btn expense-btn" data-type="expense">
+                                    <i class="fas fa-arrow-down"></i>
+                                    <span>Gasto</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha</label>
+                            <input type="date" id="movementDate" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelMovement">Cancelar</button>
+                            <button type="submit" class="btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="modal" id="settingsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Ajustes</h3>
+                    <button class="modal-close" id="closeSettingsModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-section">
+                        <h4>Datos de Prueba</h4>
+                        <button id="createSampleData" class="btn-primary" style="width: 100%; margin-top: 8px;">
+                            Crear Datos de Ejemplo
+                        </button>
+                        <button id="clearAllData" class="btn-danger" style="width: 100%; margin-top: 8px;">
+                            Limpiar Todos los Datos
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple Test App
+        console.log('🧪 Starting test app...');
+        
+        class TestApp {
+            constructor() {
+                console.log('📱 Creating test app...');
+                this.currentTab = 'dashboard';
+                this.setupEventListeners();
+                this.showNotification('Aplicación de prueba iniciada');
+            }
+
+            setupEventListeners() {
+                console.log('🎯 Setting up event listeners...');
+
+                // Navigation tabs
+                document.querySelectorAll('.nav-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const tabName = e.currentTarget.getAttribute('data-tab');
+                        console.log('🔄 Tab clicked:', tabName);
+                        this.showTab(tabName);
+                    });
+                });
+
+                // Modal buttons
+                const buttonMappings = {
+                    'addMovement': 'movementModal',
+                    'createMovement': 'movementModal',
+                    'settingsBtn': 'settingsModal'
+                };
+
+                Object.entries(buttonMappings).forEach(([buttonId, modalId]) => {
+                    const button = document.getElementById(buttonId);
+                    if (button) {
+                        button.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            console.log(`🔓 Opening modal: ${modalId}`);
+                            this.openModal(modalId);
+                        });
+                        console.log(`✅ Button "${buttonId}" → "${modalId}"`);
+                    } else {
+                        console.warn(`⚠️ Button "${buttonId}" not found`);
+                    }
+                });
+
+                // Close buttons
+                document.querySelectorAll('.modal-close, [id*="close"], [id*="cancel"]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const modal = btn.closest('.modal');
+                        if (modal) {
+                            console.log(`🔒 Closing modal: ${modal.id}`);
+                            this.closeModal(modal.id);
+                        }
+                    });
+                });
+
+                // Form submissions
+                document.querySelectorAll('form').forEach(form => {
+                    form.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        console.log('📝 Form submitted:', form.id);
+                        this.handleFormSubmit(form);
+                    });
+                });
+
+                // Sample data buttons
+                document.getElementById('createSampleData')?.addEventListener('click', () => {
+                    this.createSampleData();
+                });
+
+                document.getElementById('clearAllData')?.addEventListener('click', () => {
+                    this.clearAllData();
+                });
+
+                console.log('✅ Event listeners ready!');
+            }
+
+            showTab(tabName) {
+                console.log(`🔄 Showing tab: ${tabName}`);
+
+                // Hide all tabs
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.style.display = 'none';
+                    tab.classList.remove('active');
+                });
+
+                // Remove active from nav
+                document.querySelectorAll('.nav-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+
+                // Show target tab
+                const targetTab = document.getElementById(tabName);
+                if (targetTab) {
+                    targetTab.style.display = 'block';
+                    targetTab.classList.add('active');
+                    console.log(`✅ Tab "${tabName}" shown`);
+                } else {
+                    console.error(`❌ Tab "${tabName}" not found`);
+                }
+
+                // Activate nav tab
+                const navTab = document.querySelector(`[data-tab="${tabName}"]`);
+                if (navTab) {
+                    navTab.classList.add('active');
+                }
+
+                this.currentTab = tabName;
+                
+                // Load data for the tab
+                this.loadTabData(tabName);
+            }
+
+            loadTabData(tabName) {
+                console.log(`📊 Loading data for tab: ${tabName}`);
+                
+                switch(tabName) {
+                    case 'dashboard':
+                        this.loadDashboardData();
+                        break;
+                    case 'movements':
+                        this.loadMovementsData();
+                        break;
+                }
+            }
+
+            loadDashboardData() {
+                const transactions = this.getData('transactions');
+                console.log(`📊 Dashboard: ${transactions.length} transactions`);
+                
+                // Update balance cards
+                let income = 0, expense = 0;
+                transactions.forEach(t => {
+                    const amount = parseFloat(t.amount) || 0;
+                    if (t.type === 'income') income += amount;
+                    else if (t.type === 'expense') expense += amount;
+                });
+                
+                const totalBalance = income - expense;
+                
+                const incomeEl = document.getElementById('totalIncome');
+                const expenseEl = document.getElementById('totalExpense');
+                const balanceEl = document.getElementById('totalBalance');
+                
+                if (incomeEl) incomeEl.textContent = `$${income.toFixed(2)}`;
+                if (expenseEl) expenseEl.textContent = `$${expense.toFixed(2)}`;
+                if (balanceEl) balanceEl.textContent = `$${totalBalance.toFixed(2)}`;
+                
+                // Load chart
+                this.loadExpenseChart();
+            }
+
+            loadMovementsData() {
+                const transactions = this.getData('transactions');
+                console.log(`📊 Movements: ${transactions.length} transactions`);
+                this.displayList('allMovementsList', transactions, 'movement');
+            }
+
+            loadExpenseChart() {
+                const canvas = document.getElementById('categoryChart');
+                if (!canvas) {
+                    console.warn('Chart canvas not found');
+                    return;
+                }
+
+                const transactions = this.getData('transactions');
+                const expenses = transactions.filter(t => t.type === 'expense');
+                
+                if (expenses.length === 0) {
+                    const chartContainer = canvas.parentElement;
+                    chartContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">No hay gastos para mostrar</p>';
+                    return;
+                }
+
+                // Simple chart data
+                const labels = ['Gastos'];
+                const data = [expenses.reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0)];
+
+                // Destroy existing chart if it exists
+                if (window.categoryChartInstance) {
+                    window.categoryChartInstance.destroy();
+                }
+
+                // Create new chart
+                const ctx = canvas.getContext('2d');
+                window.categoryChartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: ['#007aff'],
+                            borderWidth: 2,
+                            borderColor: '#1a1a1a'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#ffffff',
+                                    padding: 20
+                                }
+                            }
+                        }
+                    }
+                });
+
+                console.log('📊 Expense chart loaded successfully');
+            }
+
+            getData(key) {
+                const data = localStorage.getItem(key);
+                if (data) {
+                    try {
+                        return JSON.parse(data);
+                    } catch (e) {
+                        console.error(`Error parsing ${key}:`, e);
+                        return [];
+                    }
+                }
+                return [];
+            }
+
+            displayList(containerId, items, type) {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    console.warn(`Container ${containerId} not found`);
+                    return;
+                }
+
+                if (items.length === 0) {
+                    container.innerHTML = `<p style="text-align: center; color: #666; padding: 20px;">No hay ${type}s registrados</p>`;
+                    return;
+                }
+
+                let html = '';
+                items.forEach(item => {
+                    html += `<div style="background: #2c2c2e; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #3c3c3e;">`;
+                    
+                    if (type === 'movement') {
+                        html += `
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="flex: 1;">
+                                    <strong>${item.description || 'Sin descripción'}</strong>
+                                    <div style="color: #666; font-size: 12px;">
+                                        ${item.date || 'Sin fecha'} - ${item.type || 'Sin tipo'}
+                                    </div>
+                                </div>
+                                <div style="font-size: 18px; font-weight: bold; color: ${item.type === 'income' ? '#34c759' : '#ff3b30'};">
+                                    ${item.type === 'income' ? '+' : '-'}$${Math.abs(item.amount || 0).toFixed(2)}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    html += `</div>`;
+                });
+
+                container.innerHTML = html;
+            }
+
+            openModal(modalId) {
+                console.log(`🔓 Opening modal: ${modalId}`);
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                    console.log(`✅ Modal "${modalId}" opened`);
+                } else {
+                    console.error(`❌ Modal "${modalId}" not found`);
+                }
+            }
+
+            closeModal(modalId) {
+                console.log(`🔒 Closing modal: ${modalId}`);
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+                document.body.style.overflow = '';
+                document.body.style.overflowY = 'auto';
+                console.log(`✅ Modal "${modalId}" closed`);
+            }
+
+            handleFormSubmit(form) {
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                console.log('📝 Form data:', data);
+                
+                if (form.id === 'movementForm') {
+                    this.saveMovement(data);
+                }
+                
+                // Close the modal
+                const modal = form.closest('.modal');
+                if (modal) {
+                    this.closeModal(modal.id);
+                }
+            }
+
+            saveMovement(data) {
+                console.log('💰 Saving movement:', data);
+                
+                const description = document.getElementById('movementDescription')?.value;
+                const amount = document.getElementById('movementAmount')?.value;
+                const type = document.querySelector('.type-btn.active')?.dataset.type || 'expense';
+                const date = document.getElementById('movementDate')?.value || new Date().toISOString().split('T')[0];
+                
+                if (!description || !amount) {
+                    this.showNotification('Por favor completa todos los campos requeridos');
+                    return;
+                }
+                
+                const movement = {
+                    id: Date.now().toString(),
+                    description: description,
+                    amount: parseFloat(amount),
+                    type: type,
+                    date: date,
+                    createdAt: new Date().toISOString()
+                };
+                
+                // Save to localStorage
+                const transactions = this.getData('transactions');
+                transactions.push(movement);
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+                
+                this.showNotification('Movimiento guardado exitosamente');
+                this.loadTabData(this.currentTab);
+                
+                // Reset form
+                document.getElementById('movementForm').reset();
+                document.getElementById('movementDate').value = new Date().toISOString().split('T')[0];
+            }
+
+            createSampleData() {
+                console.log('🎯 Creating sample data...');
+
+                const sampleTransactions = [
+                    {
+                        id: 'trans1',
+                        description: 'Supermercado',
+                        amount: 85.50,
+                        type: 'expense',
+                        date: new Date().toISOString().split('T')[0],
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'trans2',
+                        description: 'Salario',
+                        amount: 2500.00,
+                        type: 'income',
+                        date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'trans3',
+                        description: 'Gasolina',
+                        amount: 45.00,
+                        type: 'expense',
+                        date: new Date(Date.now() - 172800000).toISOString().split('T')[0],
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+
+                localStorage.setItem('transactions', JSON.stringify(sampleTransactions));
+
+                this.showNotification('¡Datos de ejemplo creados exitosamente!');
+                this.closeModal('settingsModal');
+                
+                // Refresh current tab
+                this.loadTabData(this.currentTab);
+            }
+
+            clearAllData() {
+                if (confirm('¿Estás seguro de que quieres eliminar todos los datos?')) {
+                    localStorage.removeItem('transactions');
+                    this.showNotification('Todos los datos han sido eliminados');
+                    this.closeModal('settingsModal');
+                    this.loadTabData(this.currentTab);
+                }
+            }
+
+            showNotification(message) {
+                console.log(`📢 Notification: ${message}`);
+                
+                // Remove existing notifications
+                document.querySelectorAll('.simple-notification').forEach(n => n.remove());
+                
+                // Create notification
+                const notification = document.createElement('div');
+                notification.className = 'simple-notification';
+                notification.textContent = message;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #2c2c2e;
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    z-index: 10000;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    transform: translateX(100%);
+                    transition: transform 0.3s ease;
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Show
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(0)';
+                }, 100);
+                
+                // Hide
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+        }
+
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📄 DOM loaded - starting test app...');
+            
+            try {
+                const app = new TestApp();
+                window.app = app;
+                
+                // Show dashboard by default
+                app.showTab('dashboard');
+                
+                console.log('🎉 Test app started successfully!');
+                
+            } catch (error) {
+                console.error('💥 Error starting test app:', error);
+                alert('Error al iniciar la aplicación: ' + error.message);
+            }
+        });
+
+        console.log('✅ Test app loaded');
+    </script>
+</body>
+</html>

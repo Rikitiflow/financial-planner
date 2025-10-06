@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Checker - Financial Planner</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #1c1c1e; color: white; }
+        .data-section { margin: 20px 0; padding: 15px; background: #2c2c2e; border-radius: 8px; }
+        .data-key { font-weight: bold; color: #007aff; }
+        .data-value { margin-left: 20px; }
+        .empty { color: #ff9500; }
+        .error { color: #ff3b30; }
+        button { padding: 10px 20px; margin: 5px; background: #007aff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { background: #1c1c1e; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Financial Planner - Data Checker</h1>
+    
+    <button onclick="checkAllData()">🔄 Refresh Data</button>
+    <button onclick="exportAllData()">📤 Export All Data</button>
+    <button onclick="clearAllData()">🗑️ Clear All Data</button>
+    <button onclick="window.open('index.html', '_blank')">🚀 Open App</button>
+    
+    <div id="dataDisplay"></div>
+
+    <script>
+        function checkAllData() {
+            const keys = [
+                'transactions', 'transfers', 'people', 'accounts', 
+                'categories', 'budgets', 'savedFilters', 'language'
+            ];
+            
+            let html = '<h2>📊 LocalStorage Data Summary</h2>';
+            let totalItems = 0;
+            
+            keys.forEach(key => {
+                const data = localStorage.getItem(key);
+                html += `<div class="data-section">`;
+                html += `<div class="data-key">🔑 ${key}</div>`;
+                
+                if (data) {
+                    try {
+                        const parsed = JSON.parse(data);
+                        const count = Array.isArray(parsed) ? parsed.length : 
+                                     typeof parsed === 'object' ? Object.keys(parsed).length : 1;
+                        
+                        html += `<div class="data-value">✅ ${count} items</div>`;
+                        html += `<pre>${JSON.stringify(parsed, null, 2)}</pre>`;
+                        totalItems += count;
+                    } catch (e) {
+                        html += `<div class="data-value error">❌ Error parsing: ${e.message}</div>`;
+                        html += `<pre>${data}</pre>`;
+                    }
+                } else {
+                    html += `<div class="data-value empty">📭 No data</div>`;
+                }
+                
+                html += `</div>`;
+            });
+            
+            html = `<div class="data-section"><h3>📈 Total: ${totalItems} items across all categories</h3></div>` + html;
+            document.getElementById('dataDisplay').innerHTML = html;
+        }
+        
+        function exportAllData() {
+            const keys = ['transactions', 'transfers', 'people', 'accounts', 'categories', 'budgets', 'savedFilters'];
+            const exportData = {};
+            
+            keys.forEach(key => {
+                const data = localStorage.getItem(key);
+                if (data) {
+                    try {
+                        exportData[key] = JSON.parse(data);
+                    } catch (e) {
+                        exportData[key] = data;
+                    }
+                }
+            });
+            
+            exportData.exportDate = new Date().toISOString();
+            
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `financial-planner-data-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert('✅ Data exported successfully!');
+        }
+        
+        function clearAllData() {
+            if (confirm('⚠️ Are you sure you want to delete ALL data? This cannot be undone!')) {
+                const keys = ['transactions', 'transfers', 'people', 'accounts', 'categories', 'budgets', 'savedFilters', 'language'];
+                keys.forEach(key => localStorage.removeItem(key));
+                alert('🗑️ All data cleared!');
+                checkAllData();
+            }
+        }
+        
+        // Auto-load data on page load
+        window.onload = checkAllData;
+    </script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Financial Planner</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <div class="nav-left">
+                <h1 class="app-title">
+                    <i class="fas fa-chart-line"></i>
+                    Financial Planner
+                </h1>
+                <button class="nav-tab active" data-tab="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-tab" data-tab="movements">
+                    <i class="fas fa-list"></i>
+                    <span>Movimientos</span>
+                </button>
+            </div>
+            <div class="nav-right">
+                <button class="btn-icon" id="settingsBtn">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="dashboard">
+                <div class="dashboard-grid">
+                    <!-- Balance Cards -->
+                    <div class="balance-cards">
+                        <div class="balance-card income">
+                            <div class="card-header">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Ingresos</span>
+                            </div>
+                            <div class="card-amount" id="totalIncome">$0.00</div>
+                        </div>
+                        <div class="balance-card expense">
+                            <div class="card-header">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>Gastos</span>
+                            </div>
+                            <div class="card-amount" id="totalExpense">$0.00</div>
+                        </div>
+                        <div class="balance-card balance">
+                            <div class="card-header">
+                                <i class="fas fa-wallet"></i>
+                                <span>Balance</span>
+                            </div>
+                            <div class="card-amount" id="totalBalance">$0.00</div>
+                        </div>
+                    </div>
+
+                    <!-- Chart Section -->
+                    <div class="chart-section">
+                        <div class="chart-header">
+                            <h3>Gastos por Categoría</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <h3>Acciones Rápidas</h3>
+                        <div class="action-buttons">
+                            <button class="action-btn" id="addMovement">
+                                <i class="fas fa-plus"></i>
+                                <span>Añadir Movimiento</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Movements Tab -->
+            <div class="tab-content" id="movements">
+                <div class="movements-container">
+                    <div class="movements-main">
+                        <div class="movements-header">
+                            <h2>Movimientos</h2>
+                            <div class="movements-controls">
+                                <button class="btn-primary" id="createMovement">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Añadir Movimiento</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="movements-list" id="allMovementsList">
+                            <!-- Movements will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Movement Modal -->
+        <div class="modal" id="movementModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="movementModalTitle">Agregar Movimiento</h3>
+                    <button class="modal-close" id="closeMovementModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="movementForm">
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <input type="text" id="movementDescription" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Cantidad</label>
+                            <input type="number" id="movementAmount" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo</label>
+                            <div class="type-selector">
+                                <button type="button" class="type-btn income-btn active" data-type="income">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>Ingreso</span>
+                                </button>
+                                <button type="button" class="type-btn expense-btn" data-type="expense">
+                                    <i class="fas fa-arrow-down"></i>
+                                    <span>Gasto</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha</label>
+                            <input type="date" id="movementDate" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelMovement">Cancelar</button>
+                            <button type="submit" class="btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="modal" id="settingsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Ajustes</h3>
+                    <button class="modal-close" id="closeSettingsModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-section">
+                        <h4>Datos de Prueba</h4>
+                        <button id="createSampleData" class="btn-primary" style="width: 100%; margin-top: 8px;">
+                            Crear Datos de Ejemplo
+                        </button>
+                        <button id="clearAllData" class="btn-danger" style="width: 100%; margin-top: 8px;">
+                            Limpiar Todos los Datos
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/simple-app-fixed.js"></script>
+    <script>
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📄 DOM loaded - starting fixed app...');
+            
+            try {
+                const app = new SimpleFinancialPlanner();
+                window.app = app;
+                
+                // Show dashboard by default
+                app.showTab('dashboard');
+                
+                console.log('🎉 Fixed app started successfully!');
+                
+            } catch (error) {
+                console.error('💥 Error starting fixed app:', error);
+                alert('Error al iniciar la aplicación: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

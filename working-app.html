@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Planner - Working Version</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <div class="nav-left">
+                <h1 class="app-title">
+                    <i class="fas fa-chart-line"></i>
+                    Financial Planner
+                </h1>
+                <button class="nav-tab active" data-tab="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-tab" data-tab="movements">
+                    <i class="fas fa-list"></i>
+                    <span>Movimientos</span>
+                </button>
+                <button class="nav-tab" data-tab="people">
+                    <i class="fas fa-users"></i>
+                    <span>Personas</span>
+                </button>
+                <button class="nav-tab" data-tab="accounts">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Cuentas</span>
+                </button>
+                <button class="nav-tab" data-tab="categories">
+                    <i class="fas fa-tags"></i>
+                    <span>Categorías</span>
+                </button>
+            </div>
+            <div class="nav-right">
+                <button class="btn-icon" id="settingsBtn">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="dashboard">
+                <div class="dashboard-grid">
+                    <!-- Balance Cards -->
+                    <div class="balance-cards">
+                        <div class="balance-card income">
+                            <div class="card-header">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Ingresos</span>
+                            </div>
+                            <div class="card-amount" id="totalIncome">$0.00</div>
+                        </div>
+                        <div class="balance-card expense">
+                            <div class="card-header">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>Gastos</span>
+                            </div>
+                            <div class="card-amount" id="totalExpense">$0.00</div>
+                        </div>
+                        <div class="balance-card balance">
+                            <div class="card-header">
+                                <i class="fas fa-wallet"></i>
+                                <span>Balance</span>
+                            </div>
+                            <div class="card-amount" id="totalBalance">$0.00</div>
+                        </div>
+                    </div>
+
+                    <!-- Chart Section -->
+                    <div class="chart-section">
+                        <div class="chart-header">
+                            <h3>Gastos por Categoría</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <h3>Acciones Rápidas</h3>
+                        <div class="action-buttons">
+                            <button class="action-btn" id="addMovement">
+                                <i class="fas fa-plus"></i>
+                                <span>Añadir Movimiento</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="recent-transactions full-width">
+                        <h3>Movimientos Recientes</h3>
+                        <div class="transactions-list" id="recentTransactionsList">
+                            <!-- Transactions will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Movements Tab -->
+            <div class="tab-content" id="movements">
+                <div class="movements-container">
+                    <div class="movements-main">
+                        <div class="movements-header">
+                            <h2>Movimientos</h2>
+                            <div class="movements-controls">
+                                <button class="btn-primary" id="createMovement">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Añadir Movimiento</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="movements-list" id="allMovementsList">
+                            <!-- Movements will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- People Tab -->
+            <div class="tab-content" id="people">
+                <div class="people-header">
+                    <h2>Personas</h2>
+                    <button class="btn-primary" id="createPerson">
+                        <i class="fas fa-plus"></i>
+                        <span>Agregar Persona</span>
+                    </button>
+                </div>
+                <div class="people-grid" id="peopleGrid">
+                    <!-- People will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Accounts Tab -->
+            <div class="tab-content" id="accounts">
+                <div class="accounts-header">
+                    <h2>Cuentas</h2>
+                    <button class="btn-primary" id="createAccount">
+                        <i class="fas fa-plus"></i>
+                        <span>Agregar Cuenta</span>
+                    </button>
+                </div>
+                <div class="accounts-grid" id="accountsGrid">
+                    <!-- Accounts will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Categories Tab -->
+            <div class="tab-content" id="categories">
+                <div class="categories-header">
+                    <h2>Categorías</h2>
+                    <button class="btn-primary" id="createCategory">
+                        <i class="fas fa-plus"></i>
+                        <span>Agregar Categoría</span>
+                    </button>
+                </div>
+                <div class="categories-grid" id="categoriesGrid">
+                    <!-- Categories will be populated by JavaScript -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Movement Modal -->
+        <div class="modal" id="movementModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="movementModalTitle">Agregar Movimiento</h3>
+                    <button class="modal-close" id="closeMovementModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="movementForm">
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <input type="text" id="movementDescription" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Cantidad</label>
+                            <input type="number" id="movementAmount" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo</label>
+                            <div class="type-selector">
+                                <button type="button" class="type-btn income-btn active" data-type="income">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>Ingreso</span>
+                                </button>
+                                <button type="button" class="type-btn expense-btn" data-type="expense">
+                                    <i class="fas fa-arrow-down"></i>
+                                    <span>Gasto</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha</label>
+                            <input type="date" id="movementDate" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelMovement">Cancelar</button>
+                            <button type="submit" class="btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Person Modal -->
+        <div class="modal" id="personModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="personModalTitle">Agregar Persona</h3>
+                    <button class="modal-close" id="closePersonModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="personForm">
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" id="personName" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelPerson">Cancelar</button>
+                            <button type="submit" class="btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Modal -->
+        <div class="modal" id="accountModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="accountModalTitle">Agregar Cuenta</h3>
+                    <button class="modal-close" id="closeAccountModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="accountForm">
+                        <div class="form-group">
+                            <label>Nombre de la Cuenta</label>
+                            <input type="text" id="accountName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo de Cuenta</label>
+                            <select id="accountType" required>
+                                <option value="checking">Corriente</option>
+                                <option value="savings">Ahorros</option>
+                                <option value="credit">Crédito</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Balance Inicial</label>
+                            <input type="number" id="accountBalance" step="0.01" value="0">
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelAccount">Cancelar</button>
+                            <button type="submit" class="btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Modal -->
+        <div class="modal" id="categoryModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="categoryModalTitle">Agregar Categoría</h3>
+                    <button class="modal-close" id="closeCategoryModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="categoryForm">
+                        <div class="form-group">
+                            <label>Nombre de la Categoría</label>
+                            <input type="text" id="categoryName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Icono</label>
+                            <div class="icon-selector" id="iconSelector">
+                                <!-- Icons will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelCategory">Cancelar</button>
+                            <button type="submit" class="btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="modal" id="settingsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Ajustes</h3>
+                    <button class="modal-close" id="closeSettingsModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-section">
+                        <h4>Datos de Prueba</h4>
+                        <button id="createSampleData" class="btn-primary" style="width: 100%; margin-top: 8px;">
+                            Crear Datos de Ejemplo
+                        </button>
+                        <button id="clearAllData" class="btn-danger" style="width: 100%; margin-top: 8px;">
+                            Limpiar Todos los Datos
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Working Financial Planner - All in one file
+        console.log('🚀 Loading working app...');
+        
+        class WorkingFinancialPlanner {
+            constructor() {
+                console.log('📱 Creating working app...');
+                this.currentTab = 'dashboard';
+                this.editingItem = null;
+                this.setupEventListeners();
+                this.showNotification('Aplicación iniciada correctamente');
+                console.log('✅ Working app ready!');
+            }
+
+            setupEventListeners() {
+                console.log('🎯 Setting up event listeners...');
+
+                // Navigation tabs
+                document.querySelectorAll('.nav-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const tabName = e.currentTarget.getAttribute('data-tab');
+                        console.log('🔄 Tab clicked:', tabName);
+                        this.showTab(tabName);
+                    });
+                });
+
+                // Modal buttons
+                const buttonMappings = {
+                    'addMovement': 'movementModal',
+                    'createMovement': 'movementModal',
+                    'createPerson': 'personModal',
+                    'createAccount': 'accountModal',
+                    'createCategory': 'categoryModal',
+                    'settingsBtn': 'settingsModal'
+                };
+
+                Object.entries(buttonMappings).forEach(([buttonId, modalId]) => {
+                    const button = document.getElementById(buttonId);
+                    if (button) {
+                        button.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            console.log(`🔓 Opening modal: ${modalId}`);
+                            this.openModal(modalId);
+                        });
+                        console.log(`✅ Button "${buttonId}" → "${modalId}"`);
+                    } else {
+                        console.warn(`⚠️ Button "${buttonId}" not found`);
+                    }
+                });
+
+                // Close buttons
+                document.querySelectorAll('.modal-close, [id*="close"], [id*="cancel"]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const modal = btn.closest('.modal');
+                        if (modal) {
+                            console.log(`🔒 Closing modal: ${modal.id}`);
+                            this.closeModal(modal.id);
+                        }
+                    });
+                });
+
+                // Form submissions
+                document.querySelectorAll('form').forEach(form => {
+                    form.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        console.log('📝 Form submitted:', form.id);
+                        this.handleFormSubmit(form);
+                    });
+                });
+
+                // Sample data buttons
+                document.getElementById('createSampleData')?.addEventListener('click', () => {
+                    this.createSampleData();
+                });
+
+                document.getElementById('clearAllData')?.addEventListener('click', () => {
+                    this.clearAllData();
+                });
+
+                // Type buttons
+                document.querySelectorAll('.type-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    });
+                });
+
+                console.log('✅ Event listeners ready!');
+            }
+
+            showTab(tabName) {
+                console.log(`🔄 Showing tab: ${tabName}`);
+
+                // Hide all tabs
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.style.display = 'none';
+                    tab.classList.remove('active');
+                });
+
+                // Remove active from nav
+                document.querySelectorAll('.nav-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+
+                // Show target tab
+                const targetTab = document.getElementById(tabName);
+                if (targetTab) {
+                    targetTab.style.display = 'block';
+                    targetTab.classList.add('active');
+                    console.log(`✅ Tab "${tabName}" shown`);
+                } else {
+                    console.error(`❌ Tab "${tabName}" not found`);
+                }
+
+                // Activate nav tab
+                const navTab = document.querySelector(`[data-tab="${tabName}"]`);
+                if (navTab) {
+                    navTab.classList.add('active');
+                }
+
+                this.currentTab = tabName;
+                this.loadTabData(tabName);
+            }
+
+            loadTabData(tabName) {
+                console.log(`📊 Loading data for tab: ${tabName}`);
+                
+                switch(tabName) {
+                    case 'dashboard':
+                        this.loadDashboardData();
+                        break;
+                    case 'movements':
+                        this.loadMovementsData();
+                        break;
+                    case 'people':
+                        this.loadPeopleData();
+                        break;
+                    case 'accounts':
+                        this.loadAccountsData();
+                        break;
+                    case 'categories':
+                        this.loadCategoriesData();
+                        break;
+                }
+            }
+
+            loadDashboardData() {
+                const transactions = this.getData('transactions');
+                console.log(`📊 Dashboard: ${transactions.length} transactions`);
+                
+                // Update balance cards
+                let income = 0, expense = 0;
+                transactions.forEach(t => {
+                    const amount = parseFloat(t.amount) || 0;
+                    if (t.type === 'income') income += amount;
+                    else if (t.type === 'expense') expense += amount;
+                });
+                
+                const totalBalance = income - expense;
+                
+                const incomeEl = document.getElementById('totalIncome');
+                const expenseEl = document.getElementById('totalExpense');
+                const balanceEl = document.getElementById('totalBalance');
+                
+                if (incomeEl) incomeEl.textContent = `$${income.toFixed(2)}`;
+                if (expenseEl) expenseEl.textContent = `$${expense.toFixed(2)}`;
+                if (balanceEl) balanceEl.textContent = `$${totalBalance.toFixed(2)}`;
+                
+                // Load recent transactions
+                const recentTransactions = transactions.slice(-5).reverse();
+                this.displayList('recentTransactionsList', recentTransactions, 'movement');
+                
+                // Load chart
+                this.loadExpenseChart();
+            }
+
+            loadMovementsData() {
+                const transactions = this.getData('transactions');
+                console.log(`📊 Movements: ${transactions.length} transactions`);
+                this.displayList('allMovementsList', transactions, 'movement');
+            }
+
+            loadPeopleData() {
+                const people = this.getData('people');
+                console.log(`📊 People: ${people.length} people`);
+                this.displayList('peopleGrid', people, 'person');
+            }
+
+            loadAccountsData() {
+                const accounts = this.getData('accounts');
+                console.log(`📊 Accounts: ${accounts.length} accounts`);
+                this.displayList('accountsGrid', accounts, 'account');
+            }
+
+            loadCategoriesData() {
+                const categories = this.getData('categories');
+                console.log(`📊 Categories: ${categories.length} categories`);
+                this.displayList('categoriesGrid', categories, 'category');
+            }
+
+            getData(key) {
+                const data = localStorage.getItem(key);
+                if (data) {
+                    try {
+                        return JSON.parse(data);
+                    } catch (e) {
+                        console.error(`Error parsing ${key}:`, e);
+                        return [];
+                    }
+                }
+                return [];
+            }
+
+            displayList(containerId, items, type) {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    console.warn(`Container ${containerId} not found`);
+                    return;
+                }
+
+                if (items.length === 0) {
+                    container.innerHTML = `<p style="text-align: center; color: #666; padding: 20px;">No hay ${type}s registrados</p>`;
+                    return;
+                }
+
+                let html = '';
+                items.forEach(item => {
+                    html += `<div style="background: #2c2c2e; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #3c3c3e;">`;
+                    
+                    if (type === 'movement') {
+                        html += `
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                        <i class="fas fa-tag" style="color: #007aff; font-size: 16px;"></i>
+                                        <strong>${item.description || 'Sin descripción'}</strong>
+                                        <span style="background: ${item.type === 'income' ? '#34c759' : '#ff3b30'}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; text-transform: uppercase;">
+                                            ${item.type === 'income' ? 'Ingreso' : 'Gasto'}
+                                        </span>
+                                    </div>
+                                    <div style="color: #666; font-size: 12px;">
+                                        ${item.date || 'Sin fecha'}
+                                    </div>
+                                </div>
+                                <div style="font-size: 18px; font-weight: bold; color: ${item.type === 'income' ? '#34c759' : '#ff3b30'};">
+                                    ${item.type === 'income' ? '+' : '-'}$${Math.abs(item.amount || 0).toFixed(2)}
+                                </div>
+                            </div>
+                        `;
+                    } else if (type === 'person') {
+                        html += `
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <strong>${item.name || 'Sin nombre'}</strong>
+                                <div style="display: flex; gap: 8px;">
+                                    <button onclick="app.deleteItem('people', '${item.id}')" style="background: #ff3b30; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">🗑️ Eliminar</button>
+                                </div>
+                            </div>
+                        `;
+                    } else if (type === 'account') {
+                        html += `
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong>${item.name || 'Sin nombre'}</strong>
+                                    <div style="color: #666; font-size: 14px;">Tipo: ${item.type || 'No especificado'}</div>
+                                    <div style="color: #007aff;">Balance: $${(item.initialBalance || 0).toFixed(2)}</div>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button onclick="app.deleteItem('accounts', '${item.id}')" style="background: #ff3b30; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">🗑️ Eliminar</button>
+                                </div>
+                            </div>
+                        `;
+                    } else if (type === 'category') {
+                        html += `
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <i class="${item.icon || 'fas fa-tag'}" style="color: #007aff;"></i>
+                                    <strong>${item.name || 'Sin nombre'}</strong>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button onclick="app.deleteItem('categories', '${item.id}')" style="background: #ff3b30; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">🗑️ Eliminar</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    html += `</div>`;
+                });
+
+                container.innerHTML = html;
+            }
+
+            deleteItem(dataType, itemId) {
+                console.log(`🗑️ Delete ${dataType} item: ${itemId}`);
+                
+                if (confirm(`¿Estás seguro de que quieres eliminar este elemento?`)) {
+                    const data = this.getData(dataType);
+                    const filteredData = data.filter(item => item.id !== itemId);
+                    
+                    localStorage.setItem(dataType, JSON.stringify(filteredData));
+                    this.showNotification(`Elemento eliminado exitosamente`);
+                    
+                    // Refresh current tab
+                    this.loadTabData(this.currentTab);
+                }
+            }
+
+            openModal(modalId) {
+                console.log(`🔓 Opening modal: ${modalId}`);
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    // Setup modal content
+                    if (modalId === 'categoryModal') {
+                        this.setupIconSelector();
+                    }
+                    
+                    modal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                    console.log(`✅ Modal "${modalId}" opened`);
+                    
+                    // Focus first input
+                    setTimeout(() => {
+                        const firstInput = modal.querySelector('input, select, textarea');
+                        if (firstInput) {
+                            firstInput.focus();
+                        }
+                    }, 100);
+                } else {
+                    console.error(`❌ Modal "${modalId}" not found`);
+                }
+            }
+
+            closeModal(modalId) {
+                console.log(`🔒 Closing modal: ${modalId}`);
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+                document.body.style.overflow = '';
+                document.body.style.overflowY = 'auto';
+                console.log(`✅ Modal "${modalId}" closed`);
+            }
+
+            handleFormSubmit(form) {
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                console.log('📝 Form data:', data);
+                
+                // Handle different form types
+                switch(form.id) {
+                    case 'movementForm':
+                        this.saveMovement(data);
+                        break;
+                    case 'personForm':
+                        this.savePerson(data);
+                        break;
+                    case 'accountForm':
+                        this.saveAccount(data);
+                        break;
+                    case 'categoryForm':
+                        this.saveCategory(data);
+                        break;
+                    default:
+                        console.log('Unknown form type:', form.id);
+                }
+                
+                // Close the modal
+                const modal = form.closest('.modal');
+                if (modal) {
+                    this.closeModal(modal.id);
+                }
+            }
+
+            saveMovement(data) {
+                console.log('💰 Saving movement:', data);
+                
+                const description = document.getElementById('movementDescription')?.value;
+                const amount = document.getElementById('movementAmount')?.value;
+                const type = document.querySelector('.type-btn.active')?.dataset.type || 'expense';
+                const date = document.getElementById('movementDate')?.value || new Date().toISOString().split('T')[0];
+                
+                if (!description || !amount) {
+                    this.showNotification('Por favor completa todos los campos requeridos');
+                    return;
+                }
+                
+                const movement = {
+                    id: Date.now().toString(),
+                    description: description,
+                    amount: parseFloat(amount),
+                    type: type,
+                    date: date,
+                    createdAt: new Date().toISOString()
+                };
+                
+                // Save to localStorage
+                const transactions = this.getData('transactions');
+                transactions.push(movement);
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+                
+                this.showNotification('Movimiento guardado exitosamente');
+                this.loadTabData(this.currentTab);
+                
+                // Reset form
+                document.getElementById('movementForm').reset();
+                document.getElementById('movementDate').value = new Date().toISOString().split('T')[0];
+            }
+
+            savePerson(data) {
+                console.log('👤 Saving person:', data);
+                
+                const name = document.getElementById('personName')?.value?.trim();
+                
+                if (!name) {
+                    this.showNotification('El nombre es requerido');
+                    return;
+                }
+                
+                const person = {
+                    id: Date.now().toString(),
+                    name: name,
+                    createdAt: new Date().toISOString()
+                };
+                
+                const people = this.getData('people');
+                people.push(person);
+                localStorage.setItem('people', JSON.stringify(people));
+                
+                this.showNotification('Persona guardada exitosamente');
+                this.loadTabData(this.currentTab);
+                
+                // Reset form
+                document.getElementById('personForm').reset();
+            }
+
+            saveAccount(data) {
+                console.log('🏦 Saving account:', data);
+                
+                const name = document.getElementById('accountName')?.value?.trim();
+                const type = document.getElementById('accountType')?.value;
+                const balance = document.getElementById('accountBalance')?.value || '0';
+                
+                if (!name || !type) {
+                    this.showNotification('Nombre y tipo son requeridos');
+                    return;
+                }
+                
+                const account = {
+                    id: Date.now().toString(),
+                    name: name,
+                    type: type,
+                    initialBalance: parseFloat(balance),
+                    createdAt: new Date().toISOString()
+                };
+                
+                const accounts = this.getData('accounts');
+                accounts.push(account);
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                
+                this.showNotification('Cuenta guardada exitosamente');
+                this.loadTabData(this.currentTab);
+                
+                // Reset form
+                document.getElementById('accountForm').reset();
+            }
+
+            saveCategory(data) {
+                console.log('🏷️ Saving category:', data);
+                
+                const name = document.getElementById('categoryName')?.value?.trim();
+                const selectedIcon = document.querySelector('.icon-option.selected');
+                const icon = selectedIcon ? selectedIcon.dataset.icon : 'fas fa-tag';
+                
+                if (!name) {
+                    this.showNotification('El nombre es requerido');
+                    return;
+                }
+                
+                const category = {
+                    id: Date.now().toString(),
+                    name: name,
+                    icon: icon,
+                    type: 'expense',
+                    createdAt: new Date().toISOString()
+                };
+                
+                const categories = this.getData('categories');
+                categories.push(category);
+                localStorage.setItem('categories', JSON.stringify(categories));
+                
+                this.showNotification('Categoría guardada exitosamente');
+                this.loadTabData(this.currentTab);
+                
+                // Reset form
+                document.getElementById('categoryForm').reset();
+                this.resetIconSelector();
+            }
+
+            setupIconSelector() {
+                const iconSelector = document.getElementById('iconSelector');
+                if (!iconSelector) return;
+
+                const icons = [
+                    'fas fa-shopping-cart', 'fas fa-utensils', 'fas fa-car', 'fas fa-home',
+                    'fas fa-heart', 'fas fa-gamepad', 'fas fa-book', 'fas fa-music',
+                    'fas fa-plane', 'fas fa-gift', 'fas fa-coffee', 'fas fa-tshirt',
+                    'fas fa-gas-pump', 'fas fa-pills', 'fas fa-dumbbell', 'fas fa-dog',
+                    'fas fa-mobile-alt', 'fas fa-laptop', 'fas fa-tv', 'fas fa-couch'
+                ];
+
+                let html = '';
+                icons.forEach(icon => {
+                    html += `
+                        <div class="icon-option" data-icon="${icon}" onclick="app.selectIcon('${icon}')">
+                            <i class="${icon}"></i>
+                        </div>
+                    `;
+                });
+
+                iconSelector.innerHTML = html;
+
+                // Add CSS for icon selector if not exists
+                if (!document.getElementById('iconSelectorStyles')) {
+                    const style = document.createElement('style');
+                    style.id = 'iconSelectorStyles';
+                    style.textContent = `
+                        .icon-selector {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+                            gap: 8px;
+                            max-height: 200px;
+                            overflow-y: auto;
+                            padding: 8px;
+                            border: 1px solid #3c3c3e;
+                            border-radius: 8px;
+                            background: #1c1c1e;
+                        }
+                        .icon-option {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 40px;
+                            height: 40px;
+                            border: 1px solid #3c3c3e;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            transition: all 0.2s ease;
+                            background: #2c2c2e;
+                        }
+                        .icon-option:hover {
+                            background: #3c3c3e;
+                            border-color: #007aff;
+                        }
+                        .icon-option.selected {
+                            background: #007aff;
+                            border-color: #007aff;
+                            color: white;
+                        }
+                        .icon-option i {
+                            font-size: 16px;
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }
+
+            selectIcon(iconClass) {
+                // Remove selected from all icons
+                document.querySelectorAll('.icon-option').forEach(icon => {
+                    icon.classList.remove('selected');
+                });
+                
+                // Add selected to clicked icon
+                const selectedIcon = document.querySelector(`[data-icon="${iconClass}"]`);
+                if (selectedIcon) {
+                    selectedIcon.classList.add('selected');
+                }
+            }
+
+            resetIconSelector() {
+                document.querySelectorAll('.icon-option').forEach(icon => {
+                    icon.classList.remove('selected');
+                });
+            }
+
+            loadExpenseChart() {
+                const canvas = document.getElementById('categoryChart');
+                if (!canvas) {
+                    console.warn('Chart canvas not found');
+                    return;
+                }
+
+                const transactions = this.getData('transactions');
+                const expenses = transactions.filter(t => t.type === 'expense');
+                
+                if (expenses.length === 0) {
+                    const chartContainer = canvas.parentElement;
+                    chartContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">No hay gastos para mostrar</p>';
+                    return;
+                }
+
+                // Simple chart data
+                const labels = ['Gastos'];
+                const data = [expenses.reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0)];
+
+                // Destroy existing chart if it exists
+                if (window.categoryChartInstance) {
+                    window.categoryChartInstance.destroy();
+                }
+
+                // Create new chart
+                const ctx = canvas.getContext('2d');
+                window.categoryChartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: ['#007aff'],
+                            borderWidth: 2,
+                            borderColor: '#1a1a1a'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#ffffff',
+                                    padding: 20
+                                }
+                            }
+                        }
+                    }
+                });
+
+                console.log('📊 Expense chart loaded successfully');
+            }
+
+            createSampleData() {
+                console.log('🎯 Creating sample data...');
+
+                const sampleTransactions = [
+                    {
+                        id: 'trans1',
+                        description: 'Supermercado',
+                        amount: 85.50,
+                        type: 'expense',
+                        date: new Date().toISOString().split('T')[0],
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'trans2',
+                        description: 'Salario',
+                        amount: 2500.00,
+                        type: 'income',
+                        date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'trans3',
+                        description: 'Gasolina',
+                        amount: 45.00,
+                        type: 'expense',
+                        date: new Date(Date.now() - 172800000).toISOString().split('T')[0],
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+
+                const samplePeople = [
+                    { id: 'person1', name: 'Juan Pérez', createdAt: new Date().toISOString() },
+                    { id: 'person2', name: 'María García', createdAt: new Date().toISOString() }
+                ];
+
+                const sampleAccounts = [
+                    { id: 'account1', name: 'Cuenta Corriente', type: 'checking', initialBalance: 1000, createdAt: new Date().toISOString() },
+                    { id: 'account2', name: 'Tarjeta de Crédito', type: 'credit', initialBalance: 0, createdAt: new Date().toISOString() }
+                ];
+
+                const sampleCategories = [
+                    { id: 'cat1', name: 'Alimentación', icon: 'fas fa-utensils', type: 'expense', createdAt: new Date().toISOString() },
+                    { id: 'cat2', name: 'Transporte', icon: 'fas fa-car', type: 'expense', createdAt: new Date().toISOString() },
+                    { id: 'cat3', name: 'Salario', icon: 'fas fa-money-bill-wave', type: 'income', createdAt: new Date().toISOString() }
+                ];
+
+                localStorage.setItem('transactions', JSON.stringify(sampleTransactions));
+                localStorage.setItem('people', JSON.stringify(samplePeople));
+                localStorage.setItem('accounts', JSON.stringify(sampleAccounts));
+                localStorage.setItem('categories', JSON.stringify(sampleCategories));
+
+                this.showNotification('¡Datos de ejemplo creados exitosamente!');
+                this.closeModal('settingsModal');
+                
+                // Refresh current tab
+                this.loadTabData(this.currentTab);
+            }
+
+            clearAllData() {
+                if (confirm('¿Estás seguro de que quieres eliminar todos los datos?')) {
+                    const keys = ['transactions', 'people', 'accounts', 'categories'];
+                    keys.forEach(key => {
+                        localStorage.removeItem(key);
+                    });
+                    
+                    this.showNotification('Todos los datos han sido eliminados');
+                    this.closeModal('settingsModal');
+                    this.loadTabData(this.currentTab);
+                }
+            }
+
+            showNotification(message) {
+                console.log(`📢 Notification: ${message}`);
+                
+                // Remove existing notifications
+                document.querySelectorAll('.simple-notification').forEach(n => n.remove());
+                
+                // Create notification
+                const notification = document.createElement('div');
+                notification.className = 'simple-notification';
+                notification.textContent = message;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #2c2c2e;
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    z-index: 10000;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    transform: translateX(100%);
+                    transition: transform 0.3s ease;
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Show
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(0)';
+                }, 100);
+                
+                // Hide
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+        }
+
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📄 DOM loaded - starting working app...');
+            
+            try {
+                const app = new WorkingFinancialPlanner();
+                window.app = app;
+                
+                // Show dashboard by default
+                app.showTab('dashboard');
+                
+                console.log('🎉 Working app started successfully!');
+                
+            } catch (error) {
+                console.error('💥 Error starting working app:', error);
+                alert('Error al iniciar la aplicación: ' + error.message);
+            }
+        });
+
+        console.log('✅ Working app loaded');
+    </script>
+</body>
+</html>
