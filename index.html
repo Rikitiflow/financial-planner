@@ -4644,24 +4644,37 @@
     async function loadFromCloud(uid) {
       const ref = doc(db, 'users', 'financial-planner');
       const snap = await getDoc(ref);
-  
+
+      const hasLocalData =
+        getLocal('transactions').length ||
+        getLocal('people').length ||
+        getLocal('accounts').length ||
+        getLocal('categories').length ||
+        getLocal('budgets').length;
+
       if (!snap.exists()) {
-        // Primera vez: si ya había datos locales (pre-GitHub), los subimos
-        const hasLocalData =
-          getLocal('transactions').length ||
-          getLocal('people').length ||
-          getLocal('accounts').length ||
-          getLocal('categories').length ||
-          getLocal('budgets').length;
-  
+        // No hay doc en la nube: si hay datos locales, subirlos
         if (hasLocalData) {
           await saveToCloud('financial-planner');
         }
         return;
       }
-  
-      // Tenemos datos en la nube → sobrescribimos localStorage
+
       const data = snap.data() || {};
+      const cloudCount =
+        (data.transactions?.length || 0) +
+        (data.people?.length || 0) +
+        (data.accounts?.length || 0) +
+        (data.categories?.length || 0) +
+        (data.budgets?.length || 0);
+
+      // Si el doc existe pero está vacío y local tiene datos, priorizar local y subir
+      if (cloudCount === 0 && hasLocalData) {
+        await saveToCloud('financial-planner');
+        return;
+      }
+
+      // Tenemos datos en la nube → sobrescribimos localStorage
       setLocal('transactions', data.transactions || []);
       setLocal('people',       data.people || []);
       setLocal('accounts',     data.accounts || []);
