@@ -1,0 +1,4594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="Personal Financial Planner - Manage your budgets, transactions, and expenses">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Financial Planner</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: #ffffff;
+            line-height: 1.5;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-tabs {
+            background: #2a2a2a;
+            border-bottom: 1px solid #38383a;
+            padding: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .app-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #007aff;
+        }
+
+        .nav-tab {
+            background: none;
+            border: none;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .nav-tab:hover {
+            background: #3a3a3a;
+        }
+
+        .nav-tab.active {
+            background: #007aff;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            color: #ffffff;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .btn-icon:hover {
+            background: #3a3a3a;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .balance-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .balance-card {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #38383a;
+        }
+
+        .balance-card.income {
+            border-left: 4px solid #34c759;
+        }
+
+        .balance-card.expense {
+            border-left: 4px solid #ff3b30;
+        }
+
+        .balance-card.balance {
+            border-left: 4px solid #007aff;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .card-amount {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .chart-section {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #38383a;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-top: 16px;
+        }
+
+        .quick-actions {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #38383a;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .action-btn {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .action-btn:hover {
+            background: #0056b3;
+        }
+
+        .btn-primary {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #2a2a2a;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #38383a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            background: #1a1a1a;
+            border: 1px solid #38383a;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #007aff;
+        }
+
+        .type-selector {
+            display: flex;
+            gap: 8px;
+        }
+
+        .type-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #38383a;
+            background: #1a1a1a;
+            color: #ffffff;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .type-btn.active {
+            background: #007aff;
+            border-color: #007aff;
+        }
+
+        .type-btn.income-btn.active {
+            background: #34c759;
+            border-color: #34c759;
+            color: white;
+        }
+
+        .type-btn.income-btn.active i {
+            color: white;
+        }
+
+        .type-btn.expense-btn.active {
+            background: #ff3b30;
+            border-color: #ff3b30;
+            color: white;
+        }
+
+        .type-btn.expense-btn.active i {
+            color: white;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .icon-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 8px;
+            border: 1px solid #38383a;
+            border-radius: 8px;
+            background: #1a1a1a;
+        }
+
+        .icon-option {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: 1px solid #38383a;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #2a2a2a;
+        }
+
+        .icon-option:hover {
+            background: #3a3a3a;
+            border-color: #007aff;
+        }
+
+        .icon-option.selected {
+            background: #007aff;
+            border-color: #007aff;
+            color: white;
+        }
+
+        .icon-option i {
+            font-size: 16px;
+        }
+
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .item-card {
+            background: #2a2a2a;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #38383a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .item-details {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .item-amount {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2a2a2a;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* Full width for recent transactions */
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* Budget styles */
+        .budget-controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .month-selector, .year-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .month-selector label, .year-selector label {
+            color: #ccc;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .month-selector select, .year-selector select {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 120px;
+        }
+
+        .month-selector select:focus, .year-selector select:focus {
+            outline: none;
+            border-color: #007aff;
+        }
+
+        .budgets-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .budget-card {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #38383a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .budget-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .budget-icon {
+            font-size: 24px;
+            color: #007aff;
+        }
+
+        .budget-details {
+            flex: 1;
+        }
+
+        .budget-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .budget-amounts {
+            display: flex;
+            gap: 16px;
+            font-size: 14px;
+        }
+
+        .budget-real {
+            color: #999;
+        }
+
+        .budget-projected {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .budget-projected input {
+            width: 100px;
+            padding: 4px 8px;
+            background: #1a1a1a;
+            border: 1px solid #38383a;
+            border-radius: 4px;
+            color: #ffffff;
+            font-size: 14px;
+        }
+
+        .budget-percentage {
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .budget-percentage.under {
+            background: #34c759;
+            color: white;
+        }
+
+        .budget-percentage.over {
+            background: #ff3b30;
+            color: white;
+        }
+
+        /* Enhanced budget card styles */
+        .budget-card.total-budget {
+            border-left: 4px solid #007aff;
+        }
+
+        .budget-card.person-budget {
+            border-left: 4px solid #34c759;
+        }
+
+        .budget-card.category-budget {
+            border-left: 4px solid #ff9500;
+        }
+
+        /* Person names in category cards */
+        .budget-persons {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .budget-persons-label {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .budget-person-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .budget-person-tag {
+            background: #333;
+            color: #ccc;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        /* New person budget styles */
+        .budget-person-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #333;
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .budget-person-row:last-child {
+            border-bottom: none;
+        }
+
+        .budget-person-name {
+            font-weight: 500;
+            color: #fff;
+            min-width: 120px;
+        }
+
+        .budget-person-spending {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .budget-person-real {
+            color: #999;
+            font-size: 14px;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .budget-person-input {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 100px;
+            text-align: right;
+        }
+
+        .budget-person-input:focus {
+            outline: none;
+            border-color: #007aff;
+        }
+
+        .budget-totals {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 2px solid #333;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: #1a1a1a;
+            padding: 24px 32px;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .budget-total-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .budget-total-label {
+            font-size: 14px;
+            color: #999;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .budget-total-value {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .budget-total-value.positive {
+            color: #34c759;
+        }
+
+        .budget-total-value.negative {
+            color: #ff3b30;
+        }
+
+        .budget-category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 0;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #333;
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .budget-category-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .nav-tabs {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            
+            .nav-tab {
+                flex: 1;
+                min-width: 80px;
+                font-size: 12px;
+                padding: 8px 4px;
+            }
+            
+            .nav-tab i {
+                font-size: 14px;
+            }
+            
+            .page-header {
+                padding: 15px;
+            }
+            
+            .page-title {
+                font-size: 20px;
+            }
+            
+            .budget-controls {
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
+            }
+            
+            .month-selector, .year-selector {
+                width: 100%;
+            }
+            
+            .month-selector select, .year-selector select {
+                width: 100%;
+            }
+            
+            .budget-card {
+                padding: 15px;
+            }
+            
+            .budget-person-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .budget-person-spending {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .budget-person-input {
+                width: 120px;
+            }
+            
+            .budget-totals {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .budget-total-item {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px;
+                background: #333;
+                border-radius: 6px;
+            }
+            
+            .modal {
+                padding: 20px 10px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                max-width: 400px;
+                margin: 10px auto;
+            }
+            
+            .form-group {
+                margin-bottom: 15px;
+            }
+            
+            .form-group label {
+                font-size: 14px;
+            }
+            
+            .form-group input, .form-group select, .form-group textarea {
+                font-size: 16px; /* Prevents zoom on iOS */
+                padding: 12px;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn-group .btn {
+                width: 100%;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .item-card {
+                padding: 15px;
+            }
+            
+            .item-title {
+                font-size: 16px;
+            }
+            
+            .item-subtitle {
+                font-size: 14px;
+            }
+            
+            .balance-card {
+                padding: 20px 15px;
+            }
+            
+            .balance-amount {
+                font-size: 24px;
+            }
+            
+            .balance-label {
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-tab {
+                font-size: 10px;
+                padding: 6px 2px;
+            }
+            
+            .nav-tab i {
+                font-size: 12px;
+            }
+            
+            .budget-person-row {
+                padding: 10px 0;
+            }
+            
+            .budget-person-name {
+                font-size: 14px;
+            }
+            
+            .budget-person-real {
+                font-size: 12px;
+            }
+            
+            .budget-person-input {
+                width: 100px;
+                font-size: 14px;
+            }
+        }
+
+        /* Calendar styles */
+        .calendar-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .calendar-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .calendar-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .calendar-nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .calendar-views {
+            position: relative;
+        }
+
+        .calendar-view {
+            display: none;
+        }
+
+        .calendar-view.active {
+            display: block;
+        }
+
+        /* Year View */
+        .year-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .month-card {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #38383a;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .month-card:hover {
+            background: #3a3a3a;
+            border-color: #007aff;
+        }
+
+        .month-card.no-data {
+            opacity: 0.6;
+            background: #1a1a1a;
+            border-color: #333;
+        }
+
+        .month-card.no-data:hover {
+            opacity: 0.8;
+            transform: translateY(-1px);
+        }
+
+        .no-data-text {
+            color: #999;
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        .month-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .month-summary {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .month-income {
+            color: #34c759;
+        }
+
+        .month-expense {
+            color: #ff3b30;
+        }
+
+        /* Month View */
+        .month-header {
+            margin-bottom: 16px;
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+        }
+
+        .weekday {
+            padding: 12px;
+            text-align: center;
+            background: #2a2a2a;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #999;
+        }
+
+        .month-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+        }
+
+        .day-cell {
+            min-height: 80px;
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .day-cell:hover {
+            background: #3a3a3a;
+        }
+
+        .day-cell.other-month {
+            color: #999;
+            background: #1a1a1a;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            opacity: 0.6;
+        }
+
+        .day-cell.other-month:hover {
+            background: #2a2a2a;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            opacity: 0.8;
+        }
+
+        .day-cell.today {
+            background: #007aff;
+        }
+
+        .day-number {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .day-transactions {
+            font-size: 10px;
+            color: #999;
+        }
+
+        .day-income {
+            color: #34c759;
+        }
+
+        .day-expense {
+            color: #ff3b30;
+        }
+
+        /* Day View */
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 12px;
+            border: 1px solid #38383a;
+        }
+
+        .day-summary {
+            display: flex;
+            gap: 24px;
+        }
+
+        .day-income, .day-expense {
+            text-align: center;
+        }
+
+        .day-income .amount {
+            color: #34c759;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .day-expense .amount {
+            color: #ff3b30;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .day-income .label, .day-expense .label {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .day-transactions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Enhanced movement display */
+        .movement-item {
+            background: #2a2a2a;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #38383a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .movement-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .movement-icon {
+            font-size: 24px;
+            color: #007aff;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        .movement-details {
+            flex: 1;
+        }
+
+        .movement-description {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .movement-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 14px;
+            color: #999;
+        }
+
+        .movement-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .movement-amount {
+            font-size: 20px;
+            font-weight: bold;
+            min-width: 100px;
+            text-align: right;
+        }
+
+        .movement-amount.income {
+            color: #34c759;
+        }
+
+        .movement-amount.expense {
+            color: #ff3b30;
+        }
+
+        .movement-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: 16px;
+        }
+
+        .btn-edit {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-edit:hover {
+            background: #0056b3;
+        }
+
+        /* Account Balance Styling */
+        .account-balance {
+            color: #007aff;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .account-balance.positive {
+            color: #34c759;
+        }
+
+        .account-balance.negative {
+            color: #ff3b30;
+        }
+
+        .account-balance.credit {
+            color: #ff9500;
+        }
+
+        /* Search and Filter Styles */
+        .search-filter-section {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            align-items: center;
+        }
+
+        .sort-section {
+            position: relative;
+        }
+
+        .sort-select {
+            background: #2a2a2a;
+            border: 2px solid #3a3a3a;
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #ffffff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            min-width: 200px;
+        }
+
+        .sort-select:hover {
+            border-color: #007aff;
+        }
+
+        .sort-select:focus {
+            outline: none;
+            border-color: #007aff;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            z-index: 1;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 2px solid #3a3a3a;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #2a2a2a;
+            color: #ffffff;
+            transition: all 0.15s ease;
+        }
+
+        .search-box input::placeholder {
+            color: #999;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #007aff;
+            background: #333;
+            color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        .filter-section {
+            position: relative;
+        }
+
+        .filter-btn {
+            background: #2a2a2a;
+            border: 2px solid #3a3a3a;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+            min-width: 44px;
+            height: 44px;
+            color: #ffffff;
+        }
+
+        .filter-btn:hover {
+            background: #333;
+            border-color: #007aff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.15);
+        }
+
+        .filter-btn.active {
+            background: #007aff;
+            color: white;
+            border-color: #007aff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+
+        .filter-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #2a2a2a;
+            border: 2px solid #3a3a3a;
+            border-radius: 8px;
+            padding: 24px;
+            min-width: 900px;
+            min-height: 500px;
+            max-height: 90vh;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            margin-top: 8px;
+            overflow-y: auto;
+        }
+
+        .filter-dropdown.show {
+            display: block;
+            animation: filterSlideIn 0.2s ease-out;
+        }
+
+        @keyframes filterSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .filter-group {
+            margin-bottom: 0;
+            padding: 12px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            border: 1px solid #3a3a3a;
+        }
+
+        .filter-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            max-height: none;
+            height: 100%;
+        }
+
+        .filter-content .filter-group {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-content .filter-group:last-child {
+            grid-column: 1 / -1;
+            margin-top: 20px;
+        }
+
+        .filter-section-title {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 14px;
+            border-bottom: 1px solid #3a3a3a;
+            padding-bottom: 6px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .checkbox-item:hover {
+            background: #3a3a3a;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            display: none;
+        }
+
+        .checkmark {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #e1e5e9;
+            border-radius: 4px;
+            position: relative;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+        }
+
+        .checkbox-item input[type="checkbox"]:checked + .checkmark {
+            background: #007aff;
+            border-color: #007aff;
+        }
+
+        .checkbox-item input[type="checkbox"]:checked + .checkmark::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 2px;
+            width: 4px;
+            height: 8px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            color: #ffffff;
+            user-select: none;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .filter-actions button {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        /* Movements Summary Styles */
+        .movements-summary {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            flex: 1;
+            background: #2a2a2a;
+            border: 2px solid #3a3a3a;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.15s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .summary-card.income {
+            border-color: #34c759;
+        }
+
+        .summary-card.income:hover {
+            box-shadow: 0 6px 20px rgba(52, 199, 89, 0.2);
+        }
+
+        .summary-card.expense {
+            border-color: #ff3b30;
+        }
+
+        .summary-card.expense:hover {
+            box-shadow: 0 6px 20px rgba(255, 59, 48, 0.2);
+        }
+
+        .summary-card.balance {
+            border-color: #007aff;
+        }
+
+        .summary-card.balance:hover {
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.2);
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #999;
+        }
+
+        .summary-header i {
+            font-size: 16px;
+        }
+
+        .summary-card.income .summary-header i {
+            color: #34c759;
+        }
+
+        .summary-card.expense .summary-header i {
+            color: #ff3b30;
+        }
+
+        .summary-card.balance .summary-header i {
+            color: #007aff;
+        }
+
+        .summary-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .summary-card.income .summary-amount {
+            color: #34c759;
+        }
+
+        .summary-card.expense .summary-amount {
+            color: #ff3b30;
+        }
+
+        .summary-card.balance .summary-amount {
+            color: #007aff;
+        }
+
+        /* More spacing between elements */
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            margin-bottom: 24px;
+        }
+
+        .page-controls {
+            margin-bottom: 24px;
+        }
+
+        .section-spacing {
+            margin-bottom: 32px;
+        }
+
+        /* Animations and 3D Effects */
+        .tab-content {
+            animation: fadeIn 0.15s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-tab {
+            transition: all 0.15s ease;
+        }
+
+        .nav-tab:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.15);
+        }
+
+        .nav-tab.active {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2);
+        }
+
+        .btn-primary, .btn-secondary, .btn-danger, .btn-edit {
+            transition: all 0.15s ease;
+        }
+
+        .btn-primary:hover, .btn-secondary:hover, .btn-danger:hover, .btn-edit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary:active, .btn-secondary:active, .btn-danger:active, .btn-edit:active {
+            transform: translateY(0px);
+            transition: all 0.05s ease;
+        }
+
+        /* Card 3D Effects */
+        .balance-card, .item-card, .movement-item, .budget-card, .month-card, .day-cell {
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .balance-card:hover, .item-card:hover, .movement-item:hover, .budget-card:hover, .month-card:hover, .day-cell:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Modal Animations */
+        .modal {
+            animation: modalFadeIn 0.15s ease-out;
+        }
+
+        .modal-content {
+            animation: modalSlideIn 0.15s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes modalSlideIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(10px) scale(0.98); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0px) scale(1); 
+            }
+        }
+
+        @keyframes modalSlideOut {
+            from { 
+                opacity: 1; 
+                transform: translateY(0px) scale(1); 
+            }
+            to { 
+                opacity: 0; 
+                transform: translateY(10px) scale(0.98); 
+            }
+        }
+
+        /* Form Animations */
+        .form-group input, .form-group select {
+            transition: all 0.15s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+        }
+
+        /* Type Button Animations */
+        .type-btn {
+            transition: all 0.15s ease;
+        }
+
+        .type-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .type-btn.active {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+
+        /* Icon Selector Animations */
+        .icon-option {
+            transition: all 0.15s ease;
+        }
+
+        .icon-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+        }
+
+        .icon-option.selected {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+        }
+
+        /* Chart Animations */
+        .chart-section {
+            transition: all 0.15s ease;
+        }
+
+        .chart-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Notification Animations */
+        .notification {
+            animation: notificationSlideIn 0.2s ease-out;
+        }
+
+        @keyframes notificationSlideIn {
+            from { 
+                opacity: 0; 
+                transform: translateX(100%); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(0); 
+            }
+        }
+
+        @keyframes notificationSlideOut {
+            from { 
+                opacity: 1; 
+                transform: translateX(0); 
+            }
+            to { 
+                opacity: 0; 
+                transform: translateX(100%); 
+            }
+        }
+
+        /* Calendar Animations */
+        .calendar-view {
+            transition: all 0.2s ease;
+        }
+
+        .calendar-view.active {
+            animation: calendarFadeIn 0.2s ease-out;
+        }
+
+        @keyframes calendarFadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(10px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0px); 
+            }
+        }
+
+        /* Day Navigation Arrows */
+        .day-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .day-nav-btn {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s ease;
+        }
+
+        .day-nav-btn:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+
+        .day-nav-btn:active {
+            transform: translateY(0px);
+        }
+
+        /* Day Slide Animations */
+        .day-slide-out {
+            animation: daySlideOut 0.15s ease-in;
+        }
+
+        .day-slide-in {
+            animation: daySlideIn 0.15s ease-out;
+        }
+
+        @keyframes daySlideOut {
+            from { 
+                opacity: 1; 
+                transform: translateX(0); 
+            }
+            to { 
+                opacity: 0; 
+                transform: translateX(-50%); 
+            }
+        }
+
+        @keyframes daySlideIn {
+            from { 
+                opacity: 0; 
+                transform: translateX(50%); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(0); 
+            }
+        }
+
+        /* List Item Animations - Completely Disabled */
+        .item-list > div,
+        .item-list > div:nth-child(1),
+        .item-list > div:nth-child(2),
+        .item-list > div:nth-child(3),
+        .item-list > div:nth-child(4),
+        .item-list > div:nth-child(5),
+        .item-list > div:nth-child(n) {
+            opacity: 1 !important;
+            transform: none !important;
+            animation: none !important;
+            transition: none !important;
+        }
+
+        @keyframes listItemFadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(10px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0px); 
+            }
+        }
+
+        /* Smooth Transitions for All Interactive Elements */
+        * {
+            transition: box-shadow 0.15s ease;
+        }
+
+        /* Enhanced Hover Effects */
+        .nav-tab:hover, .btn-primary:hover, .btn-secondary:hover, .btn-danger:hover {
+            filter: brightness(1.05);
+        }
+
+        /* Loading Animation */
+        .loading {
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-left {
+                gap: 8px;
+            }
+            
+            .nav-tab {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+            
+            .main-content {
+                padding: 16px;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .year-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .day-header {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .day-summary {
+                width: 100%;
+                justify-content: space-around;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <div class="nav-left">
+                <h1 class="app-title">
+                    <i class="fas fa-chart-line"></i>
+                    Financial Planner
+                </h1>
+                <button class="nav-tab active" data-tab="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-tab" data-tab="movements">
+                    <i class="fas fa-list"></i>
+                    <span>Movements</span>
+                </button>
+                <button class="nav-tab" data-tab="people">
+                    <i class="fas fa-users"></i>
+                    <span>People</span>
+                </button>
+                <button class="nav-tab" data-tab="accounts">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Accounts</span>
+                </button>
+                <button class="nav-tab" data-tab="transactions">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Transactions</span>
+                </button>
+                <button class="nav-tab" data-tab="categories">
+                    <i class="fas fa-tags"></i>
+                    <span>Categories</span>
+                </button>
+                <button class="nav-tab" data-tab="budgets">
+                    <i class="fas fa-wallet"></i>
+                    <span>Budgets</span>
+                </button>
+                <button class="nav-tab" data-tab="calendar">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Calendar</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="dashboard">
+                <div class="dashboard-grid">
+                    <!-- Balance Cards -->
+                    <div class="balance-cards">
+                        <div class="balance-card income">
+                            <div class="card-header">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Income</span>
+                            </div>
+                            <div class="card-amount" id="totalIncome">€0.00</div>
+                        </div>
+                        <div class="balance-card expense">
+                            <div class="card-header">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>Expenses</span>
+                            </div>
+                            <div class="card-amount" id="totalExpense">€0.00</div>
+                        </div>
+                        <div class="balance-card balance">
+                            <div class="card-header">
+                                <i class="fas fa-wallet"></i>
+                                <span>Balance</span>
+                            </div>
+                            <div class="card-amount" id="totalBalance">€0.00</div>
+                        </div>
+                    </div>
+
+                    <!-- Chart Section -->
+                    <div class="chart-section">
+                        <div class="chart-header">
+                            <h3>Expenses by Category</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <h3>Quick Actions</h3>
+                        <div class="action-buttons">
+                            <button class="action-btn" id="addMovement">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Transaction</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="recent-transactions full-width">
+                        <h3>Recent Transactions</h3>
+                        <div class="item-list" id="recentTransactionsList">
+                            <!-- Transactions will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Movements Tab -->
+            <div class="tab-content" id="movements">
+                <div class="movements-header page-header">
+                    <h2 class="page-title">Movements</h2>
+                    <div class="movements-controls page-controls">
+                        <button class="btn-primary" id="createMovement">
+                            <i class="fas fa-plus"></i>
+                            <span>Add Transaction</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Search and Filter Section -->
+                <div class="search-filter-section">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="movementSearch" placeholder="Search movements...">
+                    </div>
+                    <div class="sort-section">
+                        <select id="sortBy" class="sort-select">
+                            <option value="date-desc">Date (Newest First)</option>
+                            <option value="date-asc">Date (Oldest First)</option>
+                            <option value="amount-desc">Amount (Highest First)</option>
+                            <option value="amount-asc">Amount (Lowest First)</option>
+                        </select>
+                    </div>
+                    <div class="filter-section">
+                        <button class="filter-btn" id="filterBtn">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                        <div class="filter-dropdown" id="filterDropdown">
+                            <div class="filter-content">
+                                <div class="filter-group">
+                                    <label class="filter-section-title">People</label>
+                                    <div class="checkbox-group" id="peopleCheckboxes">
+                                        <!-- Checkboxes will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                                <div class="filter-group">
+                                    <label class="filter-section-title">Categories</label>
+                                    <div class="checkbox-group" id="categoriesCheckboxes">
+                                        <!-- Checkboxes will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                                <div class="filter-group">
+                                    <label class="filter-section-title">Accounts</label>
+                                    <div class="checkbox-group" id="accountsCheckboxes">
+                                        <!-- Checkboxes will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                                <div class="filter-group">
+                                    <label class="filter-section-title">Type</label>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" id="filterIncome" value="income">
+                                            <span class="checkmark"></span>
+                                            <span class="checkbox-label">Income</span>
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" id="filterExpense" value="expense">
+                                            <span class="checkmark"></span>
+                                            <span class="checkbox-label">Expense</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="filter-actions">
+                                <button class="btn-secondary" id="resetFilters">Reset Filters</button>
+                                <button class="btn-danger" id="clearAllFilters">Clear All</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Section -->
+                <div class="movements-summary">
+                    <div class="summary-card income">
+                        <div class="summary-header">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Total Income</span>
+                        </div>
+                        <div class="summary-amount" id="filteredIncome">€0.00</div>
+                    </div>
+                    <div class="summary-card expense">
+                        <div class="summary-header">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>Total Expenses</span>
+                        </div>
+                        <div class="summary-amount" id="filteredExpense">€0.00</div>
+                    </div>
+                    <div class="summary-card balance">
+                        <div class="summary-header">
+                            <i class="fas fa-wallet"></i>
+                            <span>Net Balance</span>
+                        </div>
+                        <div class="summary-amount" id="filteredBalance">€0.00</div>
+                    </div>
+                </div>
+                
+                <div class="item-list" id="allMovementsList">
+                    <!-- Movements will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- People Tab -->
+            <div class="tab-content" id="people">
+                <div class="people-header page-header">
+                    <h2 class="page-title">People</h2>
+                    <div class="page-controls">
+                        <button class="btn-primary" id="createPerson">
+                            <i class="fas fa-plus"></i>
+                            <span>Add Person</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="item-list" id="peopleGrid">
+                    <!-- People will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Accounts Tab -->
+            <div class="tab-content" id="accounts">
+                <div class="accounts-header page-header">
+                    <h2 class="page-title">Accounts</h2>
+                    <div class="page-controls">
+                        <button class="btn-primary" id="createAccount">
+                            <i class="fas fa-plus"></i>
+                            <span>Add Account</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="item-list" id="accountsGrid">
+                    <!-- Accounts will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Transactions Tab -->
+            <div class="tab-content" id="transactions">
+                <div class="transactions-header page-header">
+                    <h2 class="page-title">Account Transfers</h2>
+                    <div class="page-controls">
+                        <button class="btn-primary" id="createTransfer">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Transfer Money</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="item-list" id="transfersGrid">
+                    <!-- Transfers will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Categories Tab -->
+            <div class="tab-content" id="categories">
+                <div class="categories-header page-header">
+                    <h2 class="page-title">Categories</h2>
+                    <div class="page-controls">
+                        <button class="btn-primary" id="createCategory">
+                            <i class="fas fa-plus"></i>
+                            <span>Add Category</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="item-list" id="categoriesGrid">
+                    <!-- Categories will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Budgets Tab -->
+            <div class="tab-content" id="budgets">
+                <div class="budgets-header page-header">
+                    <h2 class="page-title">Budgets</h2>
+                    <div class="budget-controls">
+                        <div class="month-selector">
+                            <label for="budgetMonthSelect">Month:</label>
+                            <select id="budgetMonthSelect" onchange="app.changeBudgetMonth()">
+                                <option value="0">January</option>
+                                <option value="1">February</option>
+                                <option value="2">March</option>
+                                <option value="3">April</option>
+                                <option value="4">May</option>
+                                <option value="5">June</option>
+                                <option value="6">July</option>
+                                <option value="7">August</option>
+                                <option value="8">September</option>
+                                <option value="9">October</option>
+                                <option value="10">November</option>
+                                <option value="11">December</option>
+                            </select>
+                        </div>
+                        <div class="year-selector">
+                            <label for="budgetYearSelect">Year:</label>
+                            <select id="budgetYearSelect" onchange="app.changeBudgetYear()">
+                                <option value="2024">2024</option>
+                                <option value="2023">2023</option>
+                                <option value="2025">2025</option>
+                                <option value="2026">2026</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="budgets-grid" id="budgetsGrid">
+                    <!-- Budgets will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Calendar Tab -->
+            <div class="tab-content" id="calendar">
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button class="btn-secondary calendar-nav-btn" id="calendarBackBtn" style="display: none;">
+                            <i class="fas fa-arrow-left"></i>
+                            <span id="calendarBackText">Año</span>
+                        </button>
+                        <h2 class="calendar-title" id="calendarTitle">2024</h2>
+                        <div class="calendar-controls">
+                            <button class="btn-icon" id="calendarPrevBtn">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="btn-icon" id="calendarNextBtn">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="calendar-views">
+                        <!-- Year View -->
+                        <div class="calendar-view active" id="yearView">
+                            <div class="year-grid" id="yearGrid">
+                                <!-- Months will be generated here -->
+                            </div>
+                        </div>
+
+                        <!-- Month View -->
+                        <div class="calendar-view" id="monthView">
+                            <div class="month-header">
+                                <div class="weekdays">
+                                    <div class="weekday">Mon</div>
+                                    <div class="weekday">Tue</div>
+                                    <div class="weekday">Wed</div>
+                                    <div class="weekday">Thu</div>
+                                    <div class="weekday">Fri</div>
+                                    <div class="weekday">Sat</div>
+                                    <div class="weekday">Sun</div>
+                                </div>
+                            </div>
+                            <div class="month-grid" id="monthGrid">
+                                <!-- Days will be generated here -->
+                            </div>
+                        </div>
+
+                        <!-- Day View -->
+                        <div class="calendar-view" id="dayView">
+                            <div class="day-navigation">
+                                <button class="day-nav-btn" id="prevDayBtn">
+                                    <i class="fas fa-chevron-left"></i>
+                                    <span>Previous Day</span>
+                                </button>
+                                <h3 id="dayTitle">1 January, 2024</h3>
+                                <button class="day-nav-btn" id="nextDayBtn">
+                                    <span>Next Day</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                            <div class="day-summary">
+                                <div class="day-income">
+                                    <span class="amount" id="dayIncome">€0.00</span>
+                                    <span class="label">Income</span>
+                                </div>
+                                <div class="day-expense">
+                                    <span class="amount" id="dayExpense">€0.00</span>
+                                    <span class="label">Expenses</span>
+                                </div>
+                            </div>
+                            <div class="day-transactions" id="dayTransactions">
+                                <!-- Day transactions will be listed here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Movement Modal -->
+        <div class="modal" id="movementModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add Transaction</h3>
+                    <button class="modal-close" id="closeMovementModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="movementForm">
+                        <div class="form-group">
+                            <label>Description</label>
+                            <input type="text" id="movementDescription" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Amount</label>
+                            <input type="number" id="movementAmount" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Type</label>
+                            <div class="type-selector">
+                                <button type="button" class="type-btn income-btn active" data-type="income">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>Income</span>
+                                </button>
+                                <button type="button" class="type-btn expense-btn" data-type="expense">
+                                    <i class="fas fa-arrow-down"></i>
+                                    <span>Expense</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select id="movementCategory" required>
+                                <option value="">Select category</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Account</label>
+                            <select id="movementAccount" required>
+                                <option value="">Select account</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="movementDate" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelMovement">Cancel</button>
+                            <button type="submit" class="btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Person Modal -->
+        <div class="modal" id="personModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add Person</h3>
+                    <button class="modal-close" id="closePersonModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="personForm">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" id="personName" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelPerson">Cancel</button>
+                            <button type="submit" class="btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Modal -->
+        <div class="modal" id="accountModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add Account</h3>
+                    <button class="modal-close" id="closeAccountModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="accountForm">
+                        <div class="form-group">
+                            <label>Account Name</label>
+                            <input type="text" id="accountName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Account Type</label>
+                            <select id="accountType" required>
+                                <option value="checking">Checking</option>
+                                <option value="savings">Savings</option>
+                                <option value="credit">Credit</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Linked Person (Optional)</label>
+                            <select id="accountPerson">
+                                <option value="">Select a person</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Initial Balance</label>
+                            <input type="number" id="accountBalance" step="0.01" value="0">
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelAccount">Cancel</button>
+                            <button type="submit" class="btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Modal -->
+        <div class="modal" id="categoryModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add Category</h3>
+                    <button class="modal-close" id="closeCategoryModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="categoryForm">
+                        <div class="form-group">
+                            <label>Category Name</label>
+                            <input type="text" id="categoryName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Icon</label>
+                            <div class="icon-selector" id="iconSelector">
+                                <!-- Icons will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelCategory">Cancel</button>
+                            <button type="submit" class="btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transfer Modal -->
+        <div class="modal" id="transferModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Transfer Money</h3>
+                    <button class="modal-close" id="closeTransferModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="transferForm">
+                        <div class="form-group">
+                            <label>From Account</label>
+                            <select id="fromAccount" required>
+                                <option value="">Select source account</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>To Account</label>
+                            <select id="toAccount" required>
+                                <option value="">Select destination account</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Amount</label>
+                            <input type="number" id="transferAmount" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <input type="text" id="transferDescription" placeholder="Transfer description">
+                        </div>
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="transferDate" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelTransfer">Cancel</button>
+                            <button type="submit" class="btn-primary">Transfer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Financial Planner - Complete Working Version
+        console.log('🚀 Starting Financial Planner...');
+
+        class FinancialPlanner {
+            constructor() {
+                this.currentTab = 'dashboard';
+                this.editingItem = null;
+                this.filterStates = {
+                    people: [],
+                    categories: [],
+                    accounts: [],
+                    income: false,
+                    expense: false
+                };
+                this.setupEventListeners();
+                this.showNotification('Application started successfully');
+                console.log('✅ Financial Planner ready!');
+            }
+
+            setupEventListeners() {
+                console.log('🎯 Setting up event listeners...');
+
+                // Navigation tabs
+                document.querySelectorAll('.nav-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const tabName = e.currentTarget.getAttribute('data-tab');
+                        this.showTab(tabName);
+                    });
+                });
+
+                // Modal buttons
+                const buttonMappings = {
+                    'addMovement': 'movementModal',
+                    'createMovement': 'movementModal',
+                    'createPerson': 'personModal',
+                    'createAccount': 'accountModal',
+                    'createCategory': 'categoryModal',
+                    'createTransfer': 'transferModal'
+                };
+
+                Object.entries(buttonMappings).forEach(([buttonId, modalId]) => {
+                    const button = document.getElementById(buttonId);
+                    if (button) {
+                        button.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            this.openModal(modalId);
+                        });
+                    }
+                });
+
+                // Close buttons
+                document.querySelectorAll('.modal-close, [id*="close"], [id*="cancel"]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const modal = btn.closest('.modal');
+                        if (modal) {
+                            this.closeModal(modal.id);
+                        }
+                    });
+                });
+
+                // Form submissions
+                document.querySelectorAll('form').forEach(form => {
+                    form.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.handleFormSubmit(form);
+                    });
+                });
+
+                // Sample data buttons
+                document.getElementById('createSampleData')?.addEventListener('click', () => {
+                    this.createSampleData();
+                });
+
+                document.getElementById('clearAllData')?.addEventListener('click', () => {
+                    this.clearAllData();
+                });
+
+                // Calendar navigation
+                document.getElementById('calendarPrevBtn')?.addEventListener('click', () => {
+                    if (this.calendarView === 'year') {
+                        this.currentYear--;
+                    } else if (this.calendarView === 'month') {
+                        this.currentMonth--;
+                        if (this.currentMonth < 0) {
+                            this.currentMonth = 11;
+                            this.currentYear--;
+                        }
+                    }
+                    this.refreshCalendarView();
+                });
+
+                document.getElementById('calendarNextBtn')?.addEventListener('click', () => {
+                    if (this.calendarView === 'year') {
+                        this.currentYear++;
+                    } else if (this.calendarView === 'month') {
+                        this.currentMonth++;
+                        if (this.currentMonth > 11) {
+                            this.currentMonth = 0;
+                            this.currentYear++;
+                        }
+                    }
+                    this.refreshCalendarView();
+                });
+
+                document.getElementById('calendarBackBtn')?.addEventListener('click', () => {
+                    if (this.calendarView === 'month') {
+                        this.showYearView();
+                    } else if (this.calendarView === 'day') {
+                        this.showMonthView();
+                    }
+                });
+
+                // Day navigation
+                document.getElementById('prevDayBtn')?.addEventListener('click', () => {
+                    this.navigateDay(-1);
+                });
+
+                document.getElementById('nextDayBtn')?.addEventListener('click', () => {
+                    this.navigateDay(1);
+                });
+
+                // Search and filter functionality
+                document.getElementById('movementSearch')?.addEventListener('input', (e) => {
+                    this.filterMovements();
+                });
+
+                document.getElementById('filterBtn')?.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const dropdown = document.getElementById('filterDropdown');
+                    const btn = document.getElementById('filterBtn');
+                    
+                    if (dropdown.classList.contains('show')) {
+                        dropdown.classList.remove('show');
+                        btn.classList.remove('active');
+                    } else {
+                        dropdown.classList.add('show');
+                        btn.classList.add('active');
+                        this.setupFilterDropdowns();
+                    }
+                });
+
+
+                document.getElementById('resetFilters')?.addEventListener('click', () => {
+                    this.resetFilters();
+                    this.filterMovements();
+                });
+
+                document.getElementById('clearAllFilters')?.addEventListener('click', () => {
+                    this.clearAllFilters();
+                    this.filterMovements();
+                });
+
+                // Auto-filter on checkbox change
+                document.addEventListener('change', (e) => {
+                    if (e.target.matches('#peopleCheckboxes input, #categoriesCheckboxes input, #accountsCheckboxes input, #filterIncome, #filterExpense, #sortBy')) {
+                        this.filterMovements();
+                    }
+                });
+
+                // Close filter dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    const filterSection = document.querySelector('.filter-section');
+                    if (filterSection && !filterSection.contains(e.target)) {
+                        document.getElementById('filterDropdown').classList.remove('show');
+                        document.getElementById('filterBtn').classList.remove('active');
+                    }
+                });
+
+                // Close modals when clicking outside
+                document.addEventListener('click', (e) => {
+                    // Check if click is outside any modal
+                    if (e.target.classList.contains('modal')) {
+                        const modalId = e.target.id;
+                        this.closeModal(modalId);
+                    }
+                });
+
+                // Type buttons
+                document.querySelectorAll('.type-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    });
+                });
+
+                console.log('✅ Event listeners ready!');
+            }
+
+            showTab(tabName) {
+                console.log(`🔄 Showing tab: ${tabName}`);
+
+                // Add loading animation to current tab
+                const currentTab = document.querySelector('.tab-content.active');
+                if (currentTab) {
+                    currentTab.classList.add('loading');
+                }
+
+                // Hide all tabs with animation
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.style.display = 'none';
+                    tab.classList.remove('active');
+                });
+
+                // Remove active from nav
+                document.querySelectorAll('.nav-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+
+                // Show target tab with animation
+                const targetTab = document.getElementById(tabName);
+                if (targetTab) {
+                    targetTab.style.display = 'block';
+                    targetTab.classList.add('active');
+                    
+                    // Add entrance animation
+                    setTimeout(() => {
+                        targetTab.style.animation = 'fadeIn 0.3s ease-in-out';
+                    }, 50);
+                }
+
+                // Activate nav tab with animation
+                const navTab = document.querySelector(`[data-tab="${tabName}"]`);
+                if (navTab) {
+                    navTab.classList.add('active');
+                    
+                    // Add button animation
+                    navTab.style.animation = 'none';
+                    setTimeout(() => {
+                        navTab.style.animation = 'fadeIn 0.3s ease-in-out';
+                    }, 10);
+                }
+
+                this.currentTab = tabName;
+                
+                // Load data with slight delay for smooth transition
+                setTimeout(() => {
+                    this.loadTabData(tabName);
+                }, 100);
+            }
+
+            loadTabData(tabName) {
+                switch(tabName) {
+                    case 'dashboard':
+                        this.loadDashboardData();
+                        break;
+                    case 'movements':
+                        this.loadMovementsData();
+                        break;
+                    case 'people':
+                        this.loadPeopleData();
+                        break;
+                    case 'accounts':
+                        this.loadAccountsData();
+                        break;
+                    case 'transactions':
+                        this.loadTransactionsData();
+                        break;
+                    case 'categories':
+                        this.loadCategoriesData();
+                        break;
+                    case 'budgets':
+                        this.loadBudgetsData();
+                        break;
+                    case 'calendar':
+                        this.loadCalendarData();
+                        break;
+                }
+            }
+
+            loadDashboardData() {
+                const transactions = this.getData('transactions');
+                
+                // Update balance cards
+                let income = 0, expense = 0;
+                transactions.forEach(t => {
+                    const amount = parseFloat(t.amount) || 0;
+                    if (t.type === 'income') income += amount;
+                    else if (t.type === 'expense') expense += amount;
+                });
+                
+                const totalBalance = income - expense;
+                
+                document.getElementById('totalIncome').textContent = `€${income.toFixed(2)}`;
+                document.getElementById('totalExpense').textContent = `€${expense.toFixed(2)}`;
+                document.getElementById('totalBalance').textContent = `€${totalBalance.toFixed(2)}`;
+                
+                // Load recent transactions
+                const recentTransactions = transactions.slice(-5).reverse();
+                this.displayList('recentTransactionsList', recentTransactions, 'movement');
+                
+                // Load chart
+                this.loadExpenseChart();
+            }
+
+            loadMovementsData() {
+                this.setupFilterDropdowns();
+                const transactions = this.getData('transactions');
+                this.updateMovementsSummary(transactions);
+                this.displayList('allMovementsList', transactions, 'movement');
+            }
+
+            loadPeopleData() {
+                const people = this.getData('people');
+                this.displayList('peopleGrid', people, 'person');
+            }
+
+            loadAccountsData() {
+                const accounts = this.getData('accounts');
+                this.displayList('accountsGrid', accounts, 'account');
+            }
+
+            loadCategoriesData() {
+                const categories = this.getData('categories');
+                this.displayList('categoriesGrid', categories, 'category');
+            }
+
+            loadTransactionsData() {
+                const transfers = this.getData('transfers');
+                this.displayList('transfersGrid', transfers, 'transfer');
+            }
+
+            getData(key) {
+                const data = localStorage.getItem(key);
+                if (data) {
+                    try {
+                        return JSON.parse(data);
+                    } catch (e) {
+                        console.error(`Error parsing ${key}:`, e);
+                        return [];
+                    }
+                }
+                return [];
+            }
+
+            displayList(containerId, items, type) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                if (items.length === 0) {
+                    container.innerHTML = `<p style="text-align: center; color: #666; padding: 20px;">No ${type}s registered</p>`;
+                    return;
+                }
+
+                let html = '';
+                items.forEach(item => {
+                    html += `<div class="item-card">`;
+                    
+                    if (type === 'movement') {
+                        // Get related data
+                        const categories = this.getData('categories');
+                        const accounts = this.getData('accounts');
+                        const people = this.getData('people');
+                        
+                        const category = categories.find(c => c.id === item.category);
+                        const account = accounts.find(a => a.id === item.account);
+                        const person = people.find(p => p.id === item.person);
+                        
+                        html += `
+                            <div class="movement-item">
+                                <div class="movement-info">
+                                    <div class="movement-icon">
+                                        <i class="${category?.icon || 'fas fa-tag'}"></i>
+                                    </div>
+                                    <div class="movement-details">
+                                        <div class="movement-description">${item.description || 'No description'}</div>
+                                        <div class="movement-meta">
+                                            <span>
+                                                <i class="fas fa-calendar"></i>
+                                                ${item.date || 'No date'}
+                                            </span>
+                                            ${category ? `
+                                                <span>
+                                                    <i class="${category.icon}"></i>
+                                                    ${category.name}
+                                                </span>
+                                            ` : ''}
+                                            ${account ? `
+                                                <span>
+                                                    <i class="fas fa-credit-card"></i>
+                                                    ${account.name}
+                                                </span>
+                                            ` : ''}
+                                            ${person ? `
+                                                <span>
+                                                    <i class="fas fa-user"></i>
+                                                    ${person.name}
+                                                </span>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="movement-amount ${item.type}">
+                                    ${item.type === 'income' ? '+' : '-'}€${Math.abs(item.amount || 0).toFixed(2)}
+                                </div>
+                                <div class="movement-actions">
+                                    <button class="btn-edit" onclick="app.editMovement('${item.id}')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-danger" onclick="app.deleteItem('transactions', '${item.id}')" style="padding: 6px 12px; font-size: 12px;">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    } else if (type === 'person') {
+                        html += `
+                            <div class="item-info">
+                                <div class="item-title">${item.name || 'No name'}</div>
+                            </div>
+                            <div class="item-actions">
+                                <button onclick="app.editPerson('${item.id}')" class="btn-edit" style="padding: 4px 8px; font-size: 12px;">Edit</button>
+                                <button onclick="app.deleteItem('people', '${item.id}')" class="btn-danger" style="padding: 4px 8px; font-size: 12px;">Delete</button>
+                            </div>
+                        `;
+                    } else if (type === 'account') {
+                        const balance = item.initialBalance || 0;
+                        const balanceClass = item.type === 'credit' ? 'credit' : (balance >= 0 ? 'positive' : 'negative');
+                        // Get linked person name
+                        const people = this.getData('people');
+                        const linkedPerson = item.person ? people.find(p => p.id === item.person) : null;
+                        const personName = linkedPerson ? linkedPerson.name : 'No person linked';
+                        
+                        html += `
+                            <div class="item-info">
+                                <div class="item-title">${item.name || 'No name'}</div>
+                                <div class="item-details">Type: ${item.type || 'Not specified'}</div>
+                                <div class="item-details">Linked to: ${personName}</div>
+                                <div class="account-balance ${balanceClass}">€${balance.toFixed(2)}</div>
+                            </div>
+                            <div class="item-actions">
+                                <button onclick="app.editAccount('${item.id}')" class="btn-edit" style="padding: 4px 8px; font-size: 12px;">Edit</button>
+                                <button onclick="app.deleteItem('accounts', '${item.id}')" class="btn-danger" style="padding: 4px 8px; font-size: 12px;">Delete</button>
+                            </div>
+                        `;
+                    } else if (type === 'category') {
+                        html += `
+                            <div class="item-info">
+                                <div class="item-title">
+                                    <i class="${item.icon || 'fas fa-tag'}" style="margin-right: 8px;"></i>
+                                    ${item.name || 'No name'}
+                                </div>
+                            </div>
+                            <div class="item-actions">
+                                <button onclick="app.editCategory('${item.id}')" class="btn-edit" style="padding: 4px 8px; font-size: 12px;">Edit</button>
+                                <button onclick="app.deleteItem('categories', '${item.id}')" class="btn-danger" style="padding: 4px 8px; font-size: 12px;">Delete</button>
+                            </div>
+                        `;
+                    } else if (type === 'transfer') {
+                        const accounts = this.getData('accounts');
+                        const fromAccount = accounts.find(a => a.id === item.fromAccount);
+                        const toAccount = accounts.find(a => a.id === item.toAccount);
+                        html += `
+                            <div class="item-info">
+                                <div class="item-title">${item.description || 'Transfer'}</div>
+                                <div class="item-details">
+                                    From: ${fromAccount?.name || 'Unknown'} → To: ${toAccount?.name || 'Unknown'}
+                                    <br>Date: ${item.date || 'No date'}
+                                </div>
+                            </div>
+                            <div class="movement-amount">
+                                €${Math.abs(item.amount || 0).toFixed(2)}
+                            </div>
+                            <div class="item-actions">
+                                <button onclick="app.deleteItem('transfers', '${item.id}')" class="btn-danger" style="padding: 4px 8px; font-size: 12px;">Delete</button>
+                            </div>
+                        `;
+                    }
+                    
+                    html += `</div>`;
+                });
+
+                container.innerHTML = html;
+                
+                // Animations disabled for better performance
+            }
+
+            deleteItem(dataType, itemId) {
+                if (confirm(`Are you sure you want to delete this item?`)) {
+                    const data = this.getData(dataType);
+                    const itemToDelete = data.find(item => item.id === itemId);
+                    
+                    // If deleting a transaction, reverse the account balance change
+                    if (dataType === 'transactions' && itemToDelete) {
+                        this.reverseAccountBalance(itemToDelete);
+                    }
+                    
+                    const filteredData = data.filter(item => item.id !== itemId);
+                    
+                    localStorage.setItem(dataType, JSON.stringify(filteredData));
+                    this.showNotification(`Item deleted successfully`);
+                    
+                    // Refresh current tab
+                    this.loadTabData(this.currentTab);
+                }
+            }
+
+            openModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    // Setup modal content
+                    if (modalId === 'categoryModal') {
+                        this.setupIconSelector();
+                    }
+                    
+                    if (modalId === 'movementModal') {
+                        this.setupMovementModal();
+                    }
+                    
+                    if (modalId === 'transferModal') {
+                        this.setupTransferModal();
+                    }
+                    
+                    if (modalId === 'accountModal') {
+                        this.setupAccountModal();
+                    }
+                    
+                    modal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                    
+                    // Add entrance animation
+                    setTimeout(() => {
+                        modal.style.animation = 'modalFadeIn 0.3s ease-out';
+                        const modalContent = modal.querySelector('.modal-content');
+                        if (modalContent) {
+                            modalContent.style.animation = 'modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                        }
+                    }, 10);
+                    
+                    // Focus first input
+                    setTimeout(() => {
+                        const firstInput = modal.querySelector('input, select, textarea');
+                        if (firstInput) {
+                            firstInput.focus();
+                        }
+                    }, 300);
+                }
+            }
+
+            setupMovementModal() {
+                // Set default date
+                document.getElementById('movementDate').value = new Date().toISOString().split('T')[0];
+                
+                // Populate category dropdown
+                const categorySelect = document.getElementById('movementCategory');
+                const categories = this.getData('categories');
+                categorySelect.innerHTML = '<option value="">Select category</option>';
+                categories.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat.id;
+                    option.textContent = cat.name;
+                    categorySelect.appendChild(option);
+                });
+                
+                // Populate account dropdown
+                const accountSelect = document.getElementById('movementAccount');
+                const accounts = this.getData('accounts');
+                accountSelect.innerHTML = '<option value="">Select account</option>';
+                accounts.forEach(acc => {
+                    const option = document.createElement('option');
+                    option.value = acc.id;
+                    option.textContent = acc.name;
+                    accountSelect.appendChild(option);
+                });
+                
+                // Add event listener to show linked person info when account changes
+                accountSelect.addEventListener('change', () => {
+                    const selectedAccountId = accountSelect.value;
+                    if (selectedAccountId) {
+                        const selectedAccount = accounts.find(acc => acc.id === selectedAccountId);
+                        if (selectedAccount && selectedAccount.person) {
+                            const people = this.getData('people');
+                            const linkedPerson = people.find(p => p.id === selectedAccount.person);
+                            if (linkedPerson) {
+                                // Show linked person info (you can add a visual indicator here)
+                                console.log(`Linked to: ${linkedPerson.name}`);
+                            }
+                        }
+                    }
+                });
+            }
+
+            setupTransferModal() {
+                // Set default date
+                document.getElementById('transferDate').value = new Date().toISOString().split('T')[0];
+                
+                // Populate from account dropdown
+                const fromAccountSelect = document.getElementById('fromAccount');
+                const accounts = this.getData('accounts');
+                fromAccountSelect.innerHTML = '<option value="">Select source account</option>';
+                accounts.forEach(acc => {
+                    const option = document.createElement('option');
+                    option.value = acc.id;
+                    option.textContent = acc.name;
+                    fromAccountSelect.appendChild(option);
+                });
+                
+                // Populate to account dropdown
+                const toAccountSelect = document.getElementById('toAccount');
+                toAccountSelect.innerHTML = '<option value="">Select destination account</option>';
+                accounts.forEach(acc => {
+                    const option = document.createElement('option');
+                    option.value = acc.id;
+                    option.textContent = acc.name;
+                    toAccountSelect.appendChild(option);
+                });
+            }
+
+            setupAccountModal() {
+                // Populate people dropdown
+                const personSelect = document.getElementById('accountPerson');
+                if (personSelect) {
+                    const people = this.getData('people');
+                    personSelect.innerHTML = '<option value="">Select a person</option>';
+                    
+                    people.forEach(person => {
+                        const option = document.createElement('option');
+                        option.value = person.id;
+                        option.textContent = person.name;
+                        personSelect.appendChild(option);
+                    });
+                }
+            }
+
+            closeModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    // Add exit animation
+                    const modalContent = modal.querySelector('.modal-content');
+                    if (modalContent) {
+                        modalContent.style.animation = 'modalSlideOut 0.2s ease-in';
+                    }
+                    
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        modal.style.animation = '';
+                        if (modalContent) {
+                            modalContent.style.animation = '';
+                        }
+                    }, 200);
+                }
+                document.body.style.overflow = '';
+                document.body.style.overflowY = 'auto';
+            }
+
+            handleFormSubmit(form) {
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                switch(form.id) {
+                    case 'movementForm':
+                        this.saveMovement(data);
+                        break;
+                    case 'personForm':
+                        this.savePerson(data);
+                        break;
+                    case 'accountForm':
+                        this.saveAccount(data);
+                        break;
+                    case 'categoryForm':
+                        this.saveCategory(data);
+                        break;
+                    case 'transferForm':
+                        this.saveTransfer(data);
+                        break;
+                }
+                
+                // Close the modal
+                const modal = form.closest('.modal');
+                if (modal) {
+                    this.closeModal(modal.id);
+                }
+            }
+
+            saveMovement(data) {
+                const description = document.getElementById('movementDescription').value;
+                const amount = document.getElementById('movementAmount').value;
+                const type = document.querySelector('.type-btn.active').dataset.type;
+                const category = document.getElementById('movementCategory').value;
+                const account = document.getElementById('movementAccount').value;
+                const date = document.getElementById('movementDate').value;
+                
+                if (!description || !amount || !category || !account) {
+                    this.showNotification('Please complete all required fields');
+                    return;
+                }
+                
+                // Get person from linked account
+                const accounts = this.getData('accounts');
+                const selectedAccount = accounts.find(acc => acc.id === account);
+                const person = selectedAccount ? selectedAccount.person : null;
+                
+                const transactions = this.getData('transactions');
+                
+                // Check if we're editing an existing movement
+                if (this.editingMovementId) {
+                    // Get the original movement to reverse its balance change
+                    const originalMovement = transactions.find(m => m.id === this.editingMovementId);
+                    
+                    // Update existing movement
+                    const movementIndex = transactions.findIndex(m => m.id === this.editingMovementId);
+                    if (movementIndex !== -1) {
+                        // If account changed, reverse the old account balance and update the new one
+                        if (originalMovement && originalMovement.account !== account) {
+                            // Reverse the original account balance
+                            this.reverseAccountBalance(originalMovement);
+                            // Update the new account balance
+                            this.updateAccountBalance(account, type, parseFloat(amount));
+                        } else if (originalMovement && originalMovement.account === account) {
+                            // Same account, but amount or type might have changed
+                            // Reverse the original transaction
+                            this.reverseAccountBalance(originalMovement);
+                            // Apply the new transaction
+                            this.updateAccountBalance(account, type, parseFloat(amount));
+                        }
+                        
+                        transactions[movementIndex] = {
+                            ...transactions[movementIndex],
+                            description: description,
+                            amount: parseFloat(amount),
+                            type: type,
+                            category: category,
+                            account: account,
+                            person: person,
+                            date: date,
+                            updatedAt: new Date().toISOString()
+                        };
+                    }
+                    this.editingMovementId = null;
+                } else {
+                    // Create new movement
+                    const movement = {
+                        id: Date.now().toString(),
+                        description: description,
+                        amount: parseFloat(amount),
+                        type: type,
+                        category: category,
+                        account: account,
+                        person: person,
+                        date: date,
+                        createdAt: new Date().toISOString()
+                    };
+                    transactions.push(movement);
+                }
+                
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+                
+                // Update account balance
+                this.updateAccountBalance(account, type, parseFloat(amount));
+                
+                this.showNotification('Transaction saved successfully');
+                
+                // Store current search term before reloading
+                const currentSearchTerm = document.getElementById('movementSearch').value;
+                
+                // Update the list without full reload to avoid animation restart
+                this.filterMovements();
+                
+                // Reset form
+                document.getElementById('movementForm').reset();
+                document.getElementById('movementDate').value = new Date().toISOString().split('T')[0];
+            }
+
+            savePerson(data) {
+                const name = document.getElementById('personName').value.trim();
+                
+                if (!name) {
+                    this.showNotification('Name is required');
+                    return;
+                }
+                
+                const person = {
+                    id: Date.now().toString(),
+                    name: name,
+                    createdAt: new Date().toISOString()
+                };
+                
+                const people = this.getData('people');
+                people.push(person);
+                localStorage.setItem('people', JSON.stringify(people));
+                
+                this.showNotification('Person saved successfully');
+                this.loadTabData(this.currentTab);
+                
+                // Reset form
+                document.getElementById('personForm').reset();
+            }
+
+            saveAccount(data) {
+                const name = document.getElementById('accountName').value.trim();
+                const type = document.getElementById('accountType').value;
+                const balance = document.getElementById('accountBalance').value || '0';
+                const person = document.getElementById('accountPerson').value;
+                
+                if (!name || !type) {
+                    this.showNotification('Name and type are required');
+                    return;
+                }
+                
+                const accounts = this.getData('accounts');
+                
+                // Check if we're editing an existing account
+                if (this.editingAccountId) {
+                    // Update existing account
+                    const accountIndex = accounts.findIndex(a => a.id === this.editingAccountId);
+                    if (accountIndex !== -1) {
+                        accounts[accountIndex] = {
+                            ...accounts[accountIndex],
+                            name: name,
+                            type: type,
+                            initialBalance: parseFloat(balance),
+                            person: person || null,
+                            updatedAt: new Date().toISOString()
+                        };
+                    }
+                    this.editingAccountId = null;
+                } else {
+                    // Create new account
+                    const account = {
+                        id: Date.now().toString(),
+                        name: name,
+                        type: type,
+                        initialBalance: parseFloat(balance),
+                        person: person || null,
+                        createdAt: new Date().toISOString()
+                    };
+                    accounts.push(account);
+                }
+                
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                
+                this.showNotification('Account saved successfully');
+                this.loadTabData(this.currentTab);
+                
+                // Reset form
+                document.getElementById('accountForm').reset();
+            }
+
+            saveCategory(data) {
+                const name = document.getElementById('categoryName').value.trim();
+                const selectedIcon = document.querySelector('.icon-option.selected');
+                const icon = selectedIcon ? selectedIcon.dataset.icon : 'fas fa-tag';
+                
+                if (!name) {
+                    this.showNotification('Name is required');
+                    return;
+                }
+                
+                const category = {
+                    id: Date.now().toString(),
+                    name: name,
+                    icon: icon,
+                    type: 'expense',
+                    createdAt: new Date().toISOString()
+                };
+                
+                const categories = this.getData('categories');
+                categories.push(category);
+                localStorage.setItem('categories', JSON.stringify(categories));
+                
+                this.showNotification('Category saved successfully');
+                this.loadTabData(this.currentTab);
+                
+                // Reset form
+                document.getElementById('categoryForm').reset();
+                this.resetIconSelector();
+            }
+
+            saveTransfer(data) {
+                const fromAccount = document.getElementById('fromAccount').value;
+                const toAccount = document.getElementById('toAccount').value;
+                const amount = document.getElementById('transferAmount').value;
+                const description = document.getElementById('transferDescription').value;
+                const date = document.getElementById('transferDate').value;
+                
+                if (!fromAccount || !toAccount || !amount) {
+                    this.showNotification('Please complete all required fields');
+                    return;
+                }
+                
+                if (fromAccount === toAccount) {
+                    this.showNotification('Source and destination accounts must be different');
+                    return;
+                }
+                
+                const transfer = {
+                    id: Date.now().toString(),
+                    fromAccount: fromAccount,
+                    toAccount: toAccount,
+                    amount: parseFloat(amount),
+                    description: description || 'Transfer',
+                    date: date,
+                    createdAt: new Date().toISOString()
+                };
+                
+                // Update account balances
+                this.updateAccountBalances(fromAccount, toAccount, parseFloat(amount));
+                
+                // Save transfer
+                const transfers = this.getData('transfers');
+                transfers.push(transfer);
+                localStorage.setItem('transfers', JSON.stringify(transfers));
+                
+                this.showNotification('Transfer completed successfully');
+                this.loadTabData(this.currentTab);
+                
+                // Reset form
+                document.getElementById('transferForm').reset();
+                document.getElementById('transferDate').value = new Date().toISOString().split('T')[0];
+            }
+
+            updateAccountBalances(fromAccountId, toAccountId, amount) {
+                const accounts = this.getData('accounts');
+                const fromAccount = accounts.find(a => a.id === fromAccountId);
+                const toAccount = accounts.find(a => a.id === toAccountId);
+                
+                if (fromAccount && toAccount) {
+                    // Update from account (subtract amount)
+                    if (fromAccount.type === 'credit') {
+                        // For credit accounts, adding debt increases the balance
+                        fromAccount.initialBalance += amount;
+                    } else {
+                        // For regular accounts, subtract the amount
+                        fromAccount.initialBalance -= amount;
+                    }
+                    
+                    // Update to account (add amount)
+                    if (toAccount.type === 'credit') {
+                        // For credit accounts, reducing debt decreases the balance
+                        toAccount.initialBalance -= amount;
+                    } else {
+                        // For regular accounts, add the amount
+                        toAccount.initialBalance += amount;
+                    }
+                    
+                    localStorage.setItem('accounts', JSON.stringify(accounts));
+                }
+            }
+
+            // Edit methods
+            editMovement(movementId) {
+                const movement = this.getData('transactions').find(m => m.id === movementId);
+                if (!movement) return;
+                
+                // Set editing ID
+                this.editingMovementId = movementId;
+                
+                this.openModal('movementModal');
+                
+                // Populate form with movement data
+                document.getElementById('movementDescription').value = movement.description || '';
+                document.getElementById('movementAmount').value = movement.amount || '';
+                document.getElementById('movementDate').value = movement.date || '';
+                
+                // Set type
+                const typeButtons = document.querySelectorAll('.type-btn');
+                typeButtons.forEach(btn => btn.classList.remove('active'));
+                const activeType = document.querySelector(`[data-type="${movement.type}"]`);
+                if (activeType) activeType.classList.add('active');
+                
+                // Set dropdowns
+                setTimeout(() => {
+                    document.getElementById('movementCategory').value = movement.category || '';
+                    document.getElementById('movementAccount').value = movement.account || '';
+                    document.getElementById('movementPerson').value = movement.person || '';
+                }, 100);
+            }
+
+            editPerson(personId) {
+                const person = this.getData('people').find(p => p.id === personId);
+                if (!person) return;
+                
+                this.openModal('personModal');
+                document.getElementById('personName').value = person.name || '';
+            }
+
+            editAccount(accountId) {
+                const account = this.getData('accounts').find(a => a.id === accountId);
+                if (!account) return;
+                
+                this.editingAccountId = accountId;
+                this.openModal('accountModal');
+                document.getElementById('accountName').value = account.name || '';
+                document.getElementById('accountType').value = account.type || '';
+                document.getElementById('accountBalance').value = account.initialBalance || 0;
+                document.getElementById('accountPerson').value = account.person || '';
+            }
+
+            editCategory(categoryId) {
+                const category = this.getData('categories').find(c => c.id === categoryId);
+                if (!category) return;
+                
+                this.openModal('categoryModal');
+                document.getElementById('categoryName').value = category.name || '';
+                
+                // Select icon
+                setTimeout(() => {
+                    const iconOptions = document.querySelectorAll('.icon-option');
+                    iconOptions.forEach(option => {
+                        if (option.dataset.icon === category.icon) {
+                            option.classList.add('selected');
+                        }
+                    });
+                }, 100);
+            }
+
+            setupIconSelector() {
+                const iconSelector = document.getElementById('iconSelector');
+                if (!iconSelector) return;
+
+                const icons = [
+                    'fas fa-shopping-cart', 'fas fa-utensils', 'fas fa-car', 'fas fa-home',
+                    'fas fa-heart', 'fas fa-gamepad', 'fas fa-book', 'fas fa-music',
+                    'fas fa-plane', 'fas fa-gift', 'fas fa-coffee', 'fas fa-tshirt',
+                    'fas fa-gas-pump', 'fas fa-pills', 'fas fa-dumbbell', 'fas fa-dog',
+                    'fas fa-mobile-alt', 'fas fa-laptop', 'fas fa-tv', 'fas fa-couch'
+                ];
+
+                let html = '';
+                icons.forEach(icon => {
+                    html += `
+                        <div class="icon-option" data-icon="${icon}" onclick="app.selectIcon('${icon}')">
+                            <i class="${icon}"></i>
+                        </div>
+                    `;
+                });
+
+                iconSelector.innerHTML = html;
+            }
+
+            selectIcon(iconClass) {
+                document.querySelectorAll('.icon-option').forEach(icon => {
+                    icon.classList.remove('selected');
+                });
+                
+                const selectedIcon = document.querySelector(`[data-icon="${iconClass}"]`);
+                if (selectedIcon) {
+                    selectedIcon.classList.add('selected');
+                }
+            }
+
+            resetIconSelector() {
+                document.querySelectorAll('.icon-option').forEach(icon => {
+                    icon.classList.remove('selected');
+                });
+            }
+
+            loadExpenseChart() {
+                const canvas = document.getElementById('categoryChart');
+                if (!canvas) return;
+
+                const transactions = this.getData('transactions');
+                const categories = this.getData('categories');
+                const expenses = transactions.filter(t => t.type === 'expense');
+                
+                if (expenses.length === 0) {
+                    const chartContainer = canvas.parentElement;
+                    chartContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">No expenses to show</p>';
+                    return;
+                }
+
+                // Group expenses by category
+                const categoryTotals = {};
+                expenses.forEach(expense => {
+                    const categoryId = expense.category;
+                    if (!categoryTotals[categoryId]) {
+                        categoryTotals[categoryId] = 0;
+                    }
+                    categoryTotals[categoryId] += parseFloat(expense.amount) || 0;
+                });
+
+                // Prepare chart data
+                const labels = [];
+                const data = [];
+                const backgroundColors = [];
+                const redShades = [
+                    '#ff3b30', '#ff453a', '#ff6b6b', '#ff8e8e', '#ffa8a8',
+                    '#ffb3b3', '#ffc0c0', '#ffcdcd', '#ffdada', '#ffe6e6'
+                ];
+
+                Object.entries(categoryTotals).forEach(([categoryId, amount], index) => {
+                    const category = categories.find(c => c.id === categoryId);
+                    if (category && amount > 0) {
+                        labels.push(category.name);
+                        data.push(amount);
+                        backgroundColors.push(redShades[index % redShades.length]);
+                    }
+                });
+
+                if (data.length === 0) {
+                    const chartContainer = canvas.parentElement;
+                    chartContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">No expenses by category to show</p>';
+                    return;
+                }
+
+                // Destroy existing chart if it exists
+                if (window.categoryChartInstance) {
+                    window.categoryChartInstance.destroy();
+                }
+
+                // Create new chart
+                const ctx = canvas.getContext('2d');
+                window.categoryChartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: backgroundColors,
+                            borderWidth: 2,
+                            borderColor: '#1a1a1a'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#ffffff',
+                                    padding: 20,
+                                    usePointStyle: true
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            createSampleData() {
+                const samplePeople = [
+                    { id: 'person1', name: 'Juan Pérez', createdAt: new Date().toISOString() },
+                    { id: 'person2', name: 'María García', createdAt: new Date().toISOString() }
+                ];
+
+                const sampleAccounts = [
+                    { id: 'account1', name: 'Cuenta Corriente', type: 'checking', initialBalance: 1000, createdAt: new Date().toISOString() },
+                    { id: 'account2', name: 'Tarjeta de Crédito', type: 'credit', initialBalance: 0, createdAt: new Date().toISOString() }
+                ];
+
+                const sampleCategories = [
+                    { id: 'cat1', name: 'Alimentación', icon: 'fas fa-utensils', type: 'expense', createdAt: new Date().toISOString() },
+                    { id: 'cat2', name: 'Transporte', icon: 'fas fa-car', type: 'expense', createdAt: new Date().toISOString() },
+                    { id: 'cat3', name: 'Salario', icon: 'fas fa-money-bill-wave', type: 'income', createdAt: new Date().toISOString() },
+                    { id: 'cat4', name: 'Entretenimiento', icon: 'fas fa-gamepad', type: 'expense', createdAt: new Date().toISOString() },
+                    { id: 'cat5', name: 'Salud', icon: 'fas fa-heart', type: 'expense', createdAt: new Date().toISOString() }
+                ];
+
+                const sampleTransactions = [
+                    {
+                        id: 'trans1',
+                        description: 'Supermercado',
+                        amount: 85.50,
+                        type: 'expense',
+                        category: 'cat1',
+                        account: 'account1',
+                        person: 'person1',
+                        date: new Date().toISOString().split('T')[0],
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'trans2',
+                        description: 'Salario',
+                        amount: 2500.00,
+                        type: 'income',
+                        category: 'cat3',
+                        account: 'account1',
+                        person: 'person1',
+                        date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'trans3',
+                        description: 'Gasolina',
+                        amount: 45.00,
+                        type: 'expense',
+                        category: 'cat2',
+                        account: 'account1',
+                        person: 'person1',
+                        date: new Date(Date.now() - 172800000).toISOString().split('T')[0],
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'trans4',
+                        description: 'Cine',
+                        amount: 25.00,
+                        type: 'expense',
+                        category: 'cat4',
+                        account: 'account2',
+                        person: 'person2',
+                        date: new Date(Date.now() - 259200000).toISOString().split('T')[0],
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'trans5',
+                        description: 'Farmacia',
+                        amount: 35.50,
+                        type: 'expense',
+                        category: 'cat5',
+                        account: 'account1',
+                        person: 'person1',
+                        date: new Date(Date.now() - 345600000).toISOString().split('T')[0],
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+
+                localStorage.setItem('transactions', JSON.stringify(sampleTransactions));
+                localStorage.setItem('people', JSON.stringify(samplePeople));
+                localStorage.setItem('accounts', JSON.stringify(sampleAccounts));
+                localStorage.setItem('categories', JSON.stringify(sampleCategories));
+
+                this.showNotification('Sample data created successfully!');
+                this.closeModal('settingsModal');
+                
+                // Refresh current tab
+                this.loadTabData(this.currentTab);
+            }
+
+            clearAllData() {
+                if (confirm('Are you sure you want to delete all data?')) {
+                    const keys = ['transactions', 'people', 'accounts', 'categories', 'budgets'];
+                    keys.forEach(key => {
+                        localStorage.removeItem(key);
+                    });
+                    
+                    this.showNotification('All data has been deleted');
+                    this.closeModal('settingsModal');
+                    this.loadTabData(this.currentTab);
+                }
+            }
+
+            loadBudgetsData() {
+                const categories = this.getData('categories');
+                const people = this.getData('people');
+                const transactions = this.getData('transactions');
+                const budgets = this.getData('budgets');
+                const currentDate = new Date();
+                const selectedMonth = this.getSelectedMonth();
+                const selectedYear = this.getSelectedYear();
+                
+                const container = document.getElementById('budgetsGrid');
+                if (!container) return;
+                
+                // Set current month and year in selectors (default to current date)
+                const monthSelect = document.getElementById('budgetMonthSelect');
+                const yearSelect = document.getElementById('budgetYearSelect');
+                
+                if (monthSelect) {
+                    // If no value is set, use current month
+                    if (!monthSelect.value || monthSelect.value === '') {
+                        monthSelect.value = currentDate.getMonth();
+                    } else {
+                        monthSelect.value = selectedMonth;
+                    }
+                }
+                if (yearSelect) {
+                    // If no value is set, use current year
+                    if (!yearSelect.value || yearSelect.value === '') {
+                        yearSelect.value = currentDate.getFullYear();
+                    } else {
+                        yearSelect.value = selectedYear;
+                    }
+                }
+                
+                if (categories.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No hay categorías para crear presupuestos</p>';
+                    return;
+                }
+                
+                let html = '';
+                
+                categories.forEach(category => {
+                    // Calculate real spending for this category
+                    const categoryTransactions = transactions.filter(t => {
+                        const tDate = new Date(t.date);
+                        return t.category === category.id && 
+                               t.type === 'expense' && 
+                               tDate.getMonth() === selectedMonth && 
+                               tDate.getFullYear() === selectedYear;
+                    });
+                    
+                    const totalRealSpending = categoryTransactions.reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
+                    
+                    // Get budgets and real spending for each person in this category
+                    let personBudgets = [];
+                    let totalBudget = 0;
+                    
+                    people.forEach(person => {
+                        // Calculate real spending for this person in this category
+                        const personTransactions = categoryTransactions.filter(t => t.person === person.id);
+                        const personRealSpending = personTransactions.reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
+                        
+                        let personBudget = this.getData('budgets').find(b => 
+                            b.categoryId === category.id && 
+                            b.personId === person.id && 
+                            b.month === selectedMonth && 
+                            b.year === selectedYear
+                        );
+                        
+                        if (!personBudget) {
+                            personBudget = {
+                                id: Date.now().toString() + Math.random() + person.id,
+                                categoryId: category.id,
+                                personId: person.id,
+                                month: selectedMonth,
+                                year: selectedYear,
+                                projected: 0
+                            };
+                        }
+                        
+                        personBudgets.push({
+                            person: person,
+                            budget: personBudget,
+                            amount: personBudget.projected,
+                            realSpending: personRealSpending
+                        });
+                        
+                        totalBudget += personBudget.projected;
+                    });
+                    
+                    const percentage = totalBudget > 0 ? (totalRealSpending / totalBudget) * 100 : 0;
+                    const isOverBudget = percentage > 100;
+                    
+                    
+                    html += `
+                        <div class="budget-card category-budget">
+                            <div class="budget-info">
+                                <div class="budget-category-header">
+                                    <div class="budget-icon">
+                                        <i class="${category.icon}"></i>
+                                    </div>
+                                    <div class="budget-category-name">${category.name}</div>
+                                </div>
+                                
+                                <div class="budget-person-budgets">
+                                    ${personBudgets.map(pb => `
+                                        <div class="budget-person-row">
+                                            <span class="budget-person-name">${pb.person.name}:</span>
+                                            <div class="budget-person-spending">
+                                                <span class="budget-person-real">€${pb.realSpending.toFixed(2)}</span>
+                                                <span>|</span>
+                                                <input type="number" 
+                                                       id="budget-${category.id}-${pb.person.id}"
+                                                       class="budget-person-input"
+                                                       value="${pb.amount}" 
+                                                       step="0.01" 
+                                                       onchange="app.updatePersonBudget('${pb.budget.id}', '${category.id}', '${pb.person.id}', this.value)"
+                                                       onblur="app.updatePersonBudget('${pb.budget.id}', '${category.id}', '${pb.person.id}', this.value)"
+                                                       placeholder="0.00">
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                
+                                <div class="budget-totals">
+                                    <div class="budget-total-item">
+                                        <span class="budget-total-label">Total Projected</span>
+                                        <span class="budget-total-value">€${totalBudget.toFixed(2)}</span>
+                                    </div>
+                                    <div class="budget-total-item">
+                                        <span class="budget-total-label">Total Real</span>
+                                        <span class="budget-total-value ${totalRealSpending > totalBudget ? 'negative' : 'positive'}">€${totalRealSpending.toFixed(2)}</span>
+                                    </div>
+                                    <div class="budget-total-item">
+                                        <span class="budget-total-label">%</span>
+                                        <span class="budget-total-value ${isOverBudget ? 'negative' : 'positive'}">${percentage.toFixed(1)}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            }
+            
+            updatePersonBudget(budgetId, categoryId, personId, projectedAmount) {
+                try {
+                    const budgets = this.getData('budgets');
+                    const selectedMonth = this.getSelectedMonth();
+                    const selectedYear = this.getSelectedYear();
+                    
+                let budget = budgets.find(b => b.id === budgetId);
+                if (!budget) {
+                    budget = {
+                        id: budgetId,
+                        categoryId: categoryId,
+                        personId: personId,
+                        month: selectedMonth,
+                        year: selectedYear,
+                        projected: 0
+                    };
+                    budgets.push(budget);
+                }
+                
+                budget.projected = parseFloat(projectedAmount) || 0;
+                
+                // Save to localStorage
+                localStorage.setItem('budgets', JSON.stringify(budgets));
+                    
+                    // Refresh budgets to update totals
+                    this.loadBudgetsData();
+                    
+                    // Show success notification
+                    this.showNotification('Budget updated successfully');
+                    
+                } catch (error) {
+                    console.error('Error updating budget:', error);
+                    this.showNotification('Error updating budget', 'error');
+                }
+            }
+
+            updateBudget(budgetId, entityId, projectedAmount, budgetType = 'category') {
+                const budgets = this.getData('budgets');
+                const currentDate = new Date();
+                const selectedMonth = this.getSelectedMonth();
+                const selectedYear = this.getSelectedYear();
+                
+                let budget = budgets.find(b => b.id === budgetId);
+                if (!budget) {
+                    budget = {
+                        id: budgetId,
+                        month: selectedMonth,
+                        year: selectedYear,
+                        projected: 0
+                    };
+                    
+                    // Set the appropriate ID based on budget type
+                    if (budgetType === 'category') {
+                        budget.categoryId = entityId;
+                    } else if (budgetType === 'person') {
+                        budget.personId = entityId;
+                    } else if (budgetType === 'total') {
+                        budget.type = 'total';
+                    }
+                    
+                    budgets.push(budget);
+                }
+                
+                budget.projected = parseFloat(projectedAmount) || 0;
+                localStorage.setItem('budgets', JSON.stringify(budgets));
+                
+                // Refresh budgets
+                this.loadBudgetsData();
+            }
+
+            // New functions for enhanced budget management
+            changeBudgetMonth() {
+                const monthSelect = document.getElementById('budgetMonthSelect');
+                if (monthSelect) {
+                    localStorage.setItem('selectedBudgetMonth', monthSelect.value);
+                }
+                this.loadBudgetsData();
+            }
+
+            changeBudgetYear() {
+                const yearSelect = document.getElementById('budgetYearSelect');
+                if (yearSelect) {
+                    localStorage.setItem('selectedBudgetYear', yearSelect.value);
+                }
+                this.loadBudgetsData();
+            }
+
+            getSelectedMonth() {
+                const monthSelect = document.getElementById('budgetMonthSelect');
+                if (monthSelect) {
+                    return parseInt(monthSelect.value);
+                }
+                // Default to current month
+                return new Date().getMonth();
+            }
+
+            getSelectedYear() {
+                const yearSelect = document.getElementById('budgetYearSelect');
+                if (yearSelect) {
+                    return parseInt(yearSelect.value);
+                }
+                // Default to current year
+                return new Date().getFullYear();
+            }
+            
+            loadCalendarData() {
+                this.currentYear = new Date().getFullYear();
+                this.currentMonth = new Date().getMonth();
+                this.currentDay = new Date().getDate();
+                this.calendarView = 'year'; // year, month, day
+                
+                this.showYearView();
+                this.setupCalendarEventListeners();
+            }
+            
+            setupCalendarEventListeners() {
+                // Event listeners are already set up in setupEventListeners()
+            }
+            
+            showYearView() {
+                this.calendarView = 'year';
+                document.getElementById('calendarTitle').textContent = this.currentYear;
+                document.getElementById('calendarBackBtn').style.display = 'none';
+                
+                // Hide all views
+                document.querySelectorAll('.calendar-view').forEach(view => {
+                    view.classList.remove('active');
+                });
+                
+                // Show year view
+                document.getElementById('yearView').classList.add('active');
+                this.generateYearGrid();
+            }
+            
+            showMonthView() {
+                this.calendarView = 'month';
+                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                                  'July', 'August', 'September', 'October', 'November', 'December'];
+                document.getElementById('calendarTitle').textContent = `${monthNames[this.currentMonth]} ${this.currentYear}`;
+                document.getElementById('calendarBackBtn').style.display = 'flex';
+                document.getElementById('calendarBackText').textContent = 'Year';
+                
+                // Hide all views
+                document.querySelectorAll('.calendar-view').forEach(view => {
+                    view.classList.remove('active');
+                });
+                
+                // Show month view
+                document.getElementById('monthView').classList.add('active');
+                this.generateMonthGrid();
+            }
+            
+            showDayView(day) {
+                this.calendarView = 'day';
+                this.currentDay = day;
+                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                                  'July', 'August', 'September', 'October', 'November', 'December'];
+                document.getElementById('dayTitle').textContent = `${day} ${monthNames[this.currentMonth]}, ${this.currentYear}`;
+                document.getElementById('calendarBackBtn').style.display = 'flex';
+                document.getElementById('calendarBackText').textContent = 'Month';
+                
+                // Hide all views
+                document.querySelectorAll('.calendar-view').forEach(view => {
+                    view.classList.remove('active');
+                });
+                
+                // Show day view
+                document.getElementById('dayView').classList.add('active');
+                this.generateDayView();
+            }
+            
+            generateYearGrid() {
+                const container = document.getElementById('yearGrid');
+                if (!container) return;
+                
+                const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                                  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                
+                let html = '';
+                for (let month = 0; month < 12; month++) {
+                    const monthData = this.getMonthData(this.currentYear, month);
+                    const hasData = monthData.income > 0 || monthData.expense > 0;
+                    
+                    html += `
+                        <div class="month-card ${!hasData ? 'no-data' : ''}" onclick="app.showMonthView(${month})">
+                            <div class="month-name">${monthNames[month]}</div>
+                            <div class="month-summary">
+                                ${hasData ? `
+                                    <span class="month-income">+€${monthData.income.toFixed(2)}</span>
+                                    <span class="month-expense">-€${monthData.expense.toFixed(2)}</span>
+                                ` : `
+                                    <span class="no-data-text">No Data</span>
+                                `}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                container.innerHTML = html;
+            }
+            
+            generateMonthGrid() {
+                const container = document.getElementById('monthGrid');
+                if (!container) return;
+                
+                const firstDay = new Date(this.currentYear, this.currentMonth, 1);
+                const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
+                
+                // Calculate start date for Monday-based week
+                const startDate = new Date(firstDay);
+                const dayOfWeek = firstDay.getDay(); // 0 = Sunday, 1 = Monday, etc.
+                const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust for Monday start
+                startDate.setDate(startDate.getDate() + mondayOffset);
+                
+                let html = '';
+                for (let i = 0; i < 42; i++) {
+                    const currentDate = new Date(startDate);
+                    currentDate.setDate(startDate.getDate() + i);
+                    
+                    const isCurrentMonth = currentDate.getMonth() === this.currentMonth;
+                    const isToday = currentDate.toDateString() === new Date().toDateString();
+                    
+                    const dayData = this.getDayData(currentDate);
+                    
+                    // Handle click for other month days
+                    let clickHandler = '';
+                    if (isCurrentMonth) {
+                        clickHandler = `onclick="app.showDayView(${currentDate.getDate()})"`;
+                    } else {
+                        // Navigate to other month
+                        const targetMonth = currentDate.getMonth();
+                        const targetYear = currentDate.getFullYear();
+                        clickHandler = `onclick="app.navigateToMonth(${targetMonth}, ${targetYear}, ${currentDate.getDate()})"`;
+                    }
+                    
+                    html += `
+                        <div class="day-cell ${!isCurrentMonth ? 'other-month' : ''} ${isToday ? 'today' : ''}" 
+                             ${clickHandler}>
+                            <div class="day-number">${currentDate.getDate()}</div>
+                            <div class="day-transactions">
+                                ${dayData.income > 0 ? `<div class="day-income">+€${dayData.income.toFixed(0)}</div>` : ''}
+                                ${dayData.expense > 0 ? `<div class="day-expense">-€${dayData.expense.toFixed(0)}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                container.innerHTML = html;
+            }
+            
+            generateDayView() {
+                const date = new Date(this.currentYear, this.currentMonth, this.currentDay);
+                const dayTransactions = this.getDayTransactions(date);
+                
+                // Update day summary
+                const dayData = this.getDayData(date);
+                document.getElementById('dayIncome').textContent = `€${dayData.income.toFixed(2)}`;
+                document.getElementById('dayExpense').textContent = `€${dayData.expense.toFixed(2)}`;
+                
+                // Update transactions list
+                const container = document.getElementById('dayTransactions');
+                if (!container) return;
+                
+                if (dayTransactions.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No hay movimientos en este día</p>';
+                    return;
+                }
+                
+                this.displayList('dayTransactions', dayTransactions, 'movement');
+            }
+            
+            getMonthData(year, month) {
+                const transactions = this.getData('transactions');
+                const monthTransactions = transactions.filter(t => {
+                    const tDate = new Date(t.date);
+                    return tDate.getFullYear() === year && tDate.getMonth() === month;
+                });
+                
+                let income = 0, expense = 0;
+                monthTransactions.forEach(t => {
+                    const amount = parseFloat(t.amount) || 0;
+                    if (t.type === 'income') income += amount;
+                    else if (t.type === 'expense') expense += amount;
+                });
+                
+                return { income, expense };
+            }
+            
+            getDayData(date) {
+                const transactions = this.getData('transactions');
+                const dayTransactions = transactions.filter(t => {
+                    const tDate = new Date(t.date);
+                    return tDate.toDateString() === date.toDateString();
+                });
+                
+                let income = 0, expense = 0;
+                dayTransactions.forEach(t => {
+                    const amount = parseFloat(t.amount) || 0;
+                    if (t.type === 'income') income += amount;
+                    else if (t.type === 'expense') expense += amount;
+                });
+                
+                return { income, expense };
+            }
+            
+            getDayTransactions(date) {
+                const transactions = this.getData('transactions');
+                return transactions.filter(t => {
+                    const tDate = new Date(t.date);
+                    return tDate.toDateString() === date.toDateString();
+                });
+            }
+            
+            refreshCalendarView() {
+                if (this.calendarView === 'year') {
+                    this.showYearView();
+                } else if (this.calendarView === 'month') {
+                    this.showMonthView();
+                } else if (this.calendarView === 'day') {
+                    this.showDayView(this.currentDay);
+                }
+            }
+
+            navigateDay(direction) {
+                const currentDate = new Date(this.currentYear, this.currentMonth, this.currentDay);
+                currentDate.setDate(currentDate.getDate() + direction);
+                
+                this.currentYear = currentDate.getFullYear();
+                this.currentMonth = currentDate.getMonth();
+                this.currentDay = currentDate.getDate();
+                
+                // Add slide animation
+                const dayView = document.getElementById('dayView');
+                const dayContent = document.querySelector('.day-transactions');
+                
+                if (dayContent) {
+                    dayContent.classList.add('day-slide-out');
+                    
+                    setTimeout(() => {
+                        this.showDayView(this.currentDay);
+                        dayContent.classList.remove('day-slide-out');
+                        dayContent.classList.add('day-slide-in');
+                        
+                        setTimeout(() => {
+                            dayContent.classList.remove('day-slide-in');
+                        }, 150);
+                    }, 150);
+                } else {
+                    this.showDayView(this.currentDay);
+                }
+            }
+
+            navigateToMonth(targetMonth, targetYear, targetDay) {
+                this.currentYear = targetYear;
+                this.currentMonth = targetMonth;
+                this.currentDay = targetDay;
+                
+                // Update month view
+                this.showMonthView();
+                
+                // Then show the specific day
+                setTimeout(() => {
+                    this.showDayView(targetDay);
+                }, 100);
+            }
+
+            // Search and Filter Methods
+            setupFilterDropdowns() {
+                // Use stored filter states
+                const selectedPeople = this.filterStates.people;
+                const selectedCategories = this.filterStates.categories;
+                const selectedAccounts = this.filterStates.accounts;
+                const selectedIncome = this.filterStates.income;
+                const selectedExpense = this.filterStates.expense;
+
+                // Populate people checkboxes
+                const peopleContainer = document.getElementById('peopleCheckboxes');
+                const people = this.getData('people');
+                peopleContainer.innerHTML = '';
+                people.forEach(person => {
+                    const isChecked = selectedPeople.includes(person.id);
+                    const checkboxItem = document.createElement('label');
+                    checkboxItem.className = 'checkbox-item';
+                    checkboxItem.innerHTML = `
+                        <input type="checkbox" value="${person.id}" ${isChecked ? 'checked' : ''}>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-label">${person.name}</span>
+                    `;
+                    peopleContainer.appendChild(checkboxItem);
+                });
+
+                // Populate categories checkboxes
+                const categoriesContainer = document.getElementById('categoriesCheckboxes');
+                const categories = this.getData('categories');
+                categoriesContainer.innerHTML = '';
+                categories.forEach(category => {
+                    const isChecked = selectedCategories.includes(category.id);
+                    const checkboxItem = document.createElement('label');
+                    checkboxItem.className = 'checkbox-item';
+                    checkboxItem.innerHTML = `
+                        <input type="checkbox" value="${category.id}" ${isChecked ? 'checked' : ''}>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-label">
+                            <i class="${category.icon || 'fas fa-tag'}" style="margin-right: 6px;"></i>
+                            ${category.name}
+                        </span>
+                    `;
+                    categoriesContainer.appendChild(checkboxItem);
+                });
+
+                // Populate accounts checkboxes
+                const accountsContainer = document.getElementById('accountsCheckboxes');
+                const accounts = this.getData('accounts');
+                accountsContainer.innerHTML = '';
+                accounts.forEach(account => {
+                    const isChecked = selectedAccounts.includes(account.id);
+                    const checkboxItem = document.createElement('label');
+                    checkboxItem.className = 'checkbox-item';
+                    checkboxItem.innerHTML = `
+                        <input type="checkbox" value="${account.id}" ${isChecked ? 'checked' : ''}>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-label">${account.name}</span>
+                    `;
+                    accountsContainer.appendChild(checkboxItem);
+                });
+
+                // Restore type checkboxes
+                if (document.getElementById('filterIncome')) {
+                    document.getElementById('filterIncome').checked = selectedIncome;
+                }
+                if (document.getElementById('filterExpense')) {
+                    document.getElementById('filterExpense').checked = selectedExpense;
+                }
+            }
+
+            updateFilterStates() {
+                // Update stored filter states
+                this.filterStates.people = Array.from(document.querySelectorAll('#peopleCheckboxes input:checked')).map(cb => cb.value);
+                this.filterStates.categories = Array.from(document.querySelectorAll('#categoriesCheckboxes input:checked')).map(cb => cb.value);
+                this.filterStates.accounts = Array.from(document.querySelectorAll('#accountsCheckboxes input:checked')).map(cb => cb.value);
+                this.filterStates.income = document.getElementById('filterIncome')?.checked || false;
+                this.filterStates.expense = document.getElementById('filterExpense')?.checked || false;
+            }
+
+            filterMovements() {
+                const searchTerm = document.getElementById('movementSearch').value.toLowerCase();
+                
+                // Update filter states
+                this.updateFilterStates();
+                
+                // Get selected people
+                const selectedPeople = this.filterStates.people;
+                
+                // Get selected categories
+                const selectedCategories = this.filterStates.categories;
+                
+                // Get selected accounts
+                const selectedAccounts = this.filterStates.accounts;
+                
+                // Get selected types
+                const selectedTypes = [];
+                if (this.filterStates.income) selectedTypes.push('income');
+                if (this.filterStates.expense) selectedTypes.push('expense');
+
+                const allMovements = this.getData('transactions');
+                const filteredMovements = allMovements.filter(movement => {
+                    // Search term filter
+                    if (searchTerm && !movement.description.toLowerCase().includes(searchTerm)) {
+                        return false;
+                    }
+
+                    // Person filter (if any people selected)
+                    if (selectedPeople.length > 0 && !selectedPeople.includes(movement.person)) {
+                        return false;
+                    }
+
+                    // Category filter (if any categories selected)
+                    if (selectedCategories.length > 0 && !selectedCategories.includes(movement.category)) {
+                        return false;
+                    }
+
+                    // Account filter (if any accounts selected)
+                    if (selectedAccounts.length > 0 && !selectedAccounts.includes(movement.account)) {
+                        return false;
+                    }
+
+                    // Type filter (if any types selected)
+                    if (selectedTypes.length > 0 && !selectedTypes.includes(movement.type)) {
+                        return false;
+                    }
+
+                    return true;
+                });
+
+                // Sort movements
+                const sortBy = document.getElementById('sortBy').value;
+                const sortedMovements = this.sortMovements(filteredMovements, sortBy);
+
+                // Update summary
+                this.updateMovementsSummary(sortedMovements);
+
+                this.displayList('allMovementsList', sortedMovements, 'movement');
+            }
+
+            sortMovements(movements, sortBy) {
+                return movements.sort((a, b) => {
+                    switch (sortBy) {
+                        case 'date-desc':
+                            return new Date(b.date) - new Date(a.date);
+                        case 'date-asc':
+                            return new Date(a.date) - new Date(b.date);
+                        case 'amount-desc':
+                            return (b.amount || 0) - (a.amount || 0);
+                        case 'amount-asc':
+                            return (a.amount || 0) - (b.amount || 0);
+                        default:
+                            return 0;
+                    }
+                });
+            }
+
+            updateAccountBalance(accountId, type, amount) {
+                const accounts = this.getData('accounts');
+                const account = accounts.find(acc => acc.id === accountId);
+                
+                if (!account) return;
+                
+                // Calculate new balance based on transaction type
+                let balanceChange = 0;
+                if (type === 'income') {
+                    balanceChange = amount;
+                } else if (type === 'expense') {
+                    balanceChange = -amount;
+                }
+                
+                // For credit accounts, expenses increase the debt (positive balance)
+                if (account.type === 'credit' && type === 'expense') {
+                    balanceChange = amount; // Increase debt
+                } else if (account.type === 'credit' && type === 'income') {
+                    balanceChange = -amount; // Decrease debt
+                }
+                
+                // Update account balance
+                account.initialBalance = (account.initialBalance || 0) + balanceChange;
+                account.updatedAt = new Date().toISOString();
+                
+                // Save updated accounts
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                
+                // Update the display if we're on the accounts page
+                if (this.currentTab === 'accounts') {
+                    this.loadTabData('accounts');
+                }
+            }
+
+            reverseAccountBalance(transaction) {
+                const accounts = this.getData('accounts');
+                const account = accounts.find(acc => acc.id === transaction.account);
+                
+                if (!account) return;
+                
+                // Reverse the balance change (opposite of updateAccountBalance)
+                let balanceChange = 0;
+                if (transaction.type === 'income') {
+                    balanceChange = -transaction.amount; // Reverse income
+                } else if (transaction.type === 'expense') {
+                    balanceChange = transaction.amount; // Reverse expense
+                }
+                
+                // For credit accounts, reverse the logic
+                if (account.type === 'credit' && transaction.type === 'expense') {
+                    balanceChange = -transaction.amount; // Reverse debt increase
+                } else if (account.type === 'credit' && transaction.type === 'income') {
+                    balanceChange = transaction.amount; // Reverse debt decrease
+                }
+                
+                // Update account balance
+                account.initialBalance = (account.initialBalance || 0) + balanceChange;
+                account.updatedAt = new Date().toISOString();
+                
+                // Save updated accounts
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                
+                // Update the display if we're on the accounts page
+                if (this.currentTab === 'accounts') {
+                    this.loadTabData('accounts');
+                }
+            }
+
+            updateMovementsSummary(movements) {
+                let totalIncome = 0;
+                let totalExpense = 0;
+
+                movements.forEach(movement => {
+                    if (movement.type === 'income') {
+                        totalIncome += parseFloat(movement.amount) || 0;
+                    } else if (movement.type === 'expense') {
+                        totalExpense += parseFloat(movement.amount) || 0;
+                    }
+                });
+
+                const netBalance = totalIncome - totalExpense;
+
+                // Update summary cards
+                document.getElementById('filteredIncome').textContent = `€${totalIncome.toFixed(2)}`;
+                document.getElementById('filteredExpense').textContent = `€${totalExpense.toFixed(2)}`;
+                document.getElementById('filteredBalance').textContent = `€${netBalance.toFixed(2)}`;
+
+                // Update balance color based on positive/negative
+                const balanceElement = document.getElementById('filteredBalance');
+                if (netBalance >= 0) {
+                    balanceElement.style.color = '#34c759';
+                } else {
+                    balanceElement.style.color = '#ff3b30';
+                }
+            }
+
+            resetFilters() {
+                // Clear search
+                document.getElementById('movementSearch').value = '';
+                
+                // Uncheck all checkboxes
+                document.querySelectorAll('#peopleCheckboxes input').forEach(cb => cb.checked = false);
+                document.querySelectorAll('#categoriesCheckboxes input').forEach(cb => cb.checked = false);
+                document.querySelectorAll('#accountsCheckboxes input').forEach(cb => cb.checked = false);
+                document.getElementById('filterIncome').checked = false;
+                document.getElementById('filterExpense').checked = false;
+            }
+
+            clearAllFilters() {
+                // Clear search
+                document.getElementById('movementSearch').value = '';
+                
+                // Uncheck all checkboxes
+                document.querySelectorAll('#peopleCheckboxes input').forEach(cb => cb.checked = false);
+                document.querySelectorAll('#categoriesCheckboxes input').forEach(cb => cb.checked = false);
+                document.querySelectorAll('#accountsCheckboxes input').forEach(cb => cb.checked = false);
+                document.getElementById('filterIncome').checked = false;
+                document.getElementById('filterExpense').checked = false;
+                
+                // Close dropdown
+                document.getElementById('filterDropdown').classList.remove('show');
+                document.getElementById('filterBtn').classList.remove('active');
+            }
+
+            showNotification(message) {
+                // Remove existing notifications
+                document.querySelectorAll('.notification').forEach(n => n.remove());
+                
+                // Create notification
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                // Add entrance animation
+                setTimeout(() => {
+                    notification.style.animation = 'notificationSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                    notification.classList.add('show');
+                }, 100);
+                
+                // Hide with animation
+                setTimeout(() => {
+                    notification.style.animation = 'notificationSlideOut 0.3s ease-in';
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+        }
+
+        // Global functions for calendar
+        window.showMonthView = function(month) {
+            if (window.app) {
+                window.app.currentMonth = month;
+                window.app.showMonthView();
+            }
+        };
+
+        window.showDayView = function(day) {
+            if (window.app) {
+                window.app.showDayView(day);
+            }
+        };
+
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📄 DOM loaded - starting Financial Planner...');
+            
+            try {
+                const app = new FinancialPlanner();
+                window.app = app;
+                
+                // Show dashboard by default
+                app.showTab('dashboard');
+                
+                console.log('🎉 Financial Planner started successfully!');
+                
+            } catch (error) {
+                console.error('💥 Error starting Financial Planner:', error);
+                alert('Error starting application: ' + error.message);
+            }
+        });
+
+        console.log('✅ Financial Planner loaded');
+    </script>
+</body>
+</html>
