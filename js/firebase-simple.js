@@ -65,16 +65,21 @@ window.FirebaseSync = {
         }
 
         try {
+            console.log('Starting sync...');
             const userId = this.userId;
             const dataTypes = ['transactions', 'transfers', 'people', 'accounts', 'categories', 'budgets', 'savedFilters'];
             
             for (const dataType of dataTypes) {
+                console.log(`Syncing ${dataType}...`);
                 const data = this.getLocalData(dataType);
+                console.log(`Data for ${dataType}:`, data);
+                
                 await db.collection('users').doc(userId).collection('data').doc(dataType).set({
                     data: data,
                     lastModified: Date.now(),
                     deviceId: this.getDeviceId()
                 });
+                console.log(`${dataType} synced successfully`);
             }
 
             this.lastSyncTime = new Date().toISOString();
@@ -83,8 +88,10 @@ window.FirebaseSync = {
             this.updateUI();
             return true;
         } catch (error) {
-            console.error('Sync error:', error);
-            alert('Sync failed: ' + error.message);
+            console.error('Sync error details:', error);
+            console.error('Error code:', error.code);
+            console.error('Error message:', error.message);
+            alert('Sync failed: ' + error.message + ' (Code: ' + error.code + ')');
             return false;
         }
     },
@@ -97,14 +104,20 @@ window.FirebaseSync = {
         }
 
         try {
+            console.log('Starting force sync from remote...');
             const userId = this.userId;
             const dataTypes = ['transactions', 'transfers', 'people', 'accounts', 'categories', 'budgets', 'savedFilters'];
             
             for (const dataType of dataTypes) {
+                console.log(`Downloading ${dataType}...`);
                 const doc = await db.collection('users').doc(userId).collection('data').doc(dataType).get();
                 if (doc.exists) {
                     const remoteData = doc.data();
+                    console.log(`Remote data for ${dataType}:`, remoteData);
                     this.setLocalData(dataType, remoteData.data || []);
+                    console.log(`${dataType} downloaded successfully`);
+                } else {
+                    console.log(`No remote data found for ${dataType}`);
                 }
             }
 
@@ -119,8 +132,10 @@ window.FirebaseSync = {
             }
             return true;
         } catch (error) {
-            console.error('Force sync error:', error);
-            alert('Force sync failed: ' + error.message);
+            console.error('Force sync error details:', error);
+            console.error('Error code:', error.code);
+            console.error('Error message:', error.message);
+            alert('Force sync failed: ' + error.message + ' (Code: ' + error.code + ')');
             return false;
         }
     },
