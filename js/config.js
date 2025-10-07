@@ -92,17 +92,13 @@ const Utils = {
     },
 
     formatCurrency: (amount) => {
-        try {
-            return new Intl.NumberFormat('es-ES', {
-                style: 'currency',
-                currency: 'EUR',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }).format(amount);
-        } catch (error) {
-            // Fallback if Intl.NumberFormat fails
-            return '€' + parseFloat(amount).toFixed(2);
-        }
+        // Simple and reliable currency formatting
+        const numAmount = parseFloat(amount);
+        if (isNaN(numAmount)) return '€0.00';
+        
+        // Format with 2 decimal places and add € symbol
+        const formatted = numAmount.toFixed(2);
+        return '€' + formatted;
     },
 
     formatDate: (date) => {

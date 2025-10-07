@@ -8,6 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2000); // Wait for Firebase to initialize
 });
 
+// Also try to initialize when window loads
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        initializeSyncUI();
+    }, 3000);
+});
+
 function initializeSyncUI() {
     console.log('🔄 Initializing simple sync UI...');
     
@@ -16,6 +23,14 @@ function initializeSyncUI() {
     const syncNowBtn = document.getElementById('syncNowBtn');
     const forceSyncBtn = document.getElementById('forceSyncBtn');
     const uploadDataBtn = document.getElementById('uploadDataBtn');
+    const setSharedIdBtn = document.getElementById('setSharedIdBtn');
+    
+    console.log('UI elements found:');
+    console.log('- syncToggle:', !!syncToggle);
+    console.log('- syncNowBtn:', !!syncNowBtn);
+    console.log('- forceSyncBtn:', !!forceSyncBtn);
+    console.log('- uploadDataBtn:', !!uploadDataBtn);
+    console.log('- setSharedIdBtn:', !!setSharedIdBtn);
 
     if (syncToggle) {
         // Load sync state
@@ -71,11 +86,10 @@ function initializeSyncUI() {
         });
     }
 
-    const setSharedIdBtn = document.getElementById('setSharedIdBtn');
-    console.log('Set Shared ID button found:', setSharedIdBtn);
     if (setSharedIdBtn) {
         console.log('Adding click listener to Set Shared ID button');
         setSharedIdBtn.addEventListener('click', () => {
+            console.log('Set Shared ID button clicked!');
             const currentId = localStorage.getItem('shared_user_id') || 'financial_planner_shared_user';
             const newId = prompt('Enter shared user ID (same on all devices):', currentId);
             if (newId && newId.trim()) {
