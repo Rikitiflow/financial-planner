@@ -72,7 +72,9 @@ function initializeSyncUI() {
     }
 
     const setSharedIdBtn = document.getElementById('setSharedIdBtn');
+    console.log('Set Shared ID button found:', setSharedIdBtn);
     if (setSharedIdBtn) {
+        console.log('Adding click listener to Set Shared ID button');
         setSharedIdBtn.addEventListener('click', () => {
             const currentId = localStorage.getItem('shared_user_id') || 'financial_planner_shared_user';
             const newId = prompt('Enter shared user ID (same on all devices):', currentId);
@@ -82,6 +84,8 @@ function initializeSyncUI() {
                 location.reload();
             }
         });
+    } else {
+        console.error('Set Shared ID button not found!');
     }
 
     // Update sync status periodically

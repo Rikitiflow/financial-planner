@@ -92,12 +92,17 @@ const Utils = {
     },
 
     formatCurrency: (amount) => {
-        return new Intl.NumberFormat('es-ES', {
-            style: 'currency',
-            currency: 'EUR',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(amount);
+        try {
+            return new Intl.NumberFormat('es-ES', {
+                style: 'currency',
+                currency: 'EUR',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(amount);
+        } catch (error) {
+            // Fallback if Intl.NumberFormat fails
+            return '€' + parseFloat(amount).toFixed(2);
+        }
     },
 
     formatDate: (date) => {
