@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Currency</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #1a1a1a; color: white; }
+        .test { margin: 10px 0; padding: 10px; background: #333; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Currency Format Test</h1>
+    
+    <div class="test">
+        <h3>Test 1: Direct € symbol</h3>
+        <p>€123.45</p>
+    </div>
+    
+    <div class="test">
+        <h3>Test 2: Intl.NumberFormat</h3>
+        <p id="test2"></p>
+    </div>
+    
+    <div class="test">
+        <h3>Test 3: Fallback method</h3>
+        <p id="test3"></p>
+    </div>
+    
+    <div class="test">
+        <h3>Test 4: Manual format</h3>
+        <p id="test4"></p>
+    </div>
+
+    <script>
+        const amount = 123.45;
+        
+        // Test 2: Intl.NumberFormat
+        try {
+            const formatted = new Intl.NumberFormat('es-ES', {
+                style: 'currency',
+                currency: 'EUR',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(amount);
+            document.getElementById('test2').textContent = formatted;
+        } catch (error) {
+            document.getElementById('test2').textContent = 'Error: ' + error.message;
+        }
+        
+        // Test 3: Fallback method
+        document.getElementById('test3').textContent = '€' + parseFloat(amount).toFixed(2);
+        
+        // Test 4: Manual format
+        document.getElementById('test4').textContent = amount.toFixed(2) + ' EUR';
+        
+        console.log('Currency tests completed');
+    </script>
+</body>
+</html>
