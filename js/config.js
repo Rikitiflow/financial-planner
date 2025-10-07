@@ -110,4 +110,8 @@ console.log('✅ Config loaded successfully');
 console.log('Utils available:', typeof Utils !== 'undefined');
 if (typeof Utils !== 'undefined') {
     console.log('formatCurrency test:', Utils.formatCurrency(123.45));
+    // Test direct euro symbol
+    console.log('Direct euro test: €123.45');
+} else {
+    console.error('Utils not available - check if js/config.js is loaded');
 }

@@ -68,6 +68,39 @@ window.FirebaseSync = {
         localStorage.setItem('firebase_sync_enabled', enabled.toString());
         console.log(`Sync ${enabled ? 'enabled' : 'disabled'}`);
         this.updateUI();
+        
+        if (enabled) {
+            this.setupAutoSync();
+        } else {
+            this.removeAutoSync();
+        }
+    },
+
+    // Setup auto sync after data changes
+    setupAutoSync() {
+        // Listen for localStorage changes (data updates)
+        const originalSetItem = localStorage.setItem;
+        const self = this;
+        
+        localStorage.setItem = function(key, value) {
+            originalSetItem.apply(this, arguments);
+            
+            // Check if it's a data key and sync is enabled
+            const dataKeys = ['transactions', 'transfers', 'people', 'accounts', 'categories', 'budgets', 'savedFilters'];
+            if (dataKeys.includes(key) && self.syncEnabled && self.isAuthenticated) {
+                console.log(`Auto-syncing after ${key} change`);
+                setTimeout(() => {
+                    self.syncAllData();
+                }, 1000); // Wait 1 second to avoid too many syncs
+            }
+        };
+        
+        console.log('Auto-sync setup complete');
+    },
+
+    // Remove auto sync
+    removeAutoSync() {
+        console.log('Auto-sync disabled');
     },
 
     // Sync all data
@@ -149,6 +182,51 @@ window.FirebaseSync = {
             console.error('Error code:', error.code);
             console.error('Error message:', error.message);
             alert('Force sync failed: ' + error.message + ' (Code: ' + error.code + ')');
+            return false;
+        }
+    },
+
+    // Upload local data (force upload)
+    async uploadLocalData() {
+        if (!this.isAuthenticated) {
+            alert('Please enable sync first');
+            return false;
+        }
+
+        try {
+            console.log('Uploading local data...');
+            const userId = this.userId;
+            const dataTypes = ['transactions', 'transfers', 'people', 'accounts', 'categories', 'budgets', 'savedFilters'];
+            
+            let uploadedCount = 0;
+            for (const dataType of dataTypes) {
+                console.log(`Uploading ${dataType}...`);
+                const data = this.getLocalData(dataType);
+                console.log(`Local data for ${dataType}:`, data);
+                
+                if (data && data.length > 0) {
+                    await db.collection('users').doc(userId).collection('data').doc(dataType).set({
+                        data: data,
+                        lastModified: Date.now(),
+                        deviceId: this.getDeviceId()
+                    });
+                    uploadedCount++;
+                    console.log(`${dataType} uploaded successfully`);
+                } else {
+                    console.log(`No data to upload for ${dataType}`);
+                }
+            }
+
+            this.lastSyncTime = new Date().toISOString();
+            localStorage.setItem('last_sync_time', this.lastSyncTime);
+            console.log(`Local data upload completed. ${uploadedCount} data types uploaded.`);
+            this.updateUI();
+            
+            alert(`Local data uploaded successfully! ${uploadedCount} data types uploaded.`);
+            return true;
+        } catch (error) {
+            console.error('Upload local data error:', error);
+            alert('Upload local data failed: ' + error.message);
             return false;
         }
     },

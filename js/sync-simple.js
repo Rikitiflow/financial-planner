@@ -102,6 +102,22 @@ function initializeSyncUI() {
         console.error('Set Shared ID button not found!');
     }
 
+    const uploadLocalDataBtn = document.getElementById('uploadLocalDataBtn');
+    if (uploadLocalDataBtn) {
+        console.log('Adding click listener to Upload Local Data button');
+        uploadLocalDataBtn.addEventListener('click', () => {
+            console.log('Upload Local Data button clicked!');
+            if (window.FirebaseSync) {
+                // Force upload all local data
+                window.FirebaseSync.uploadLocalData();
+            } else {
+                alert('Firebase sync not available');
+            }
+        });
+    } else {
+        console.error('Upload Local Data button not found!');
+    }
+
     // Update sync status periodically
     setInterval(() => {
         if (window.FirebaseSync) {
