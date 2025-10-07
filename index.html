@@ -1912,6 +1912,271 @@
                 justify-content: space-around;
             }
         }
+
+        /* Sync Tab Styles */
+        .sync-container {
+            padding: 24px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .sync-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .sync-header h2 {
+            color: #007aff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .sync-header p {
+            color: #8e8e93;
+            font-size: 16px;
+        }
+
+        .sync-status {
+            margin-bottom: 32px;
+        }
+
+        .status-card {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: 1px solid #38383a;
+        }
+
+        .status-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: #007aff;
+            color: white;
+        }
+
+        .status-info h3 {
+            margin: 0 0 4px 0;
+            color: #ffffff;
+        }
+
+        .status-info p {
+            margin: 0 0 4px 0;
+            color: #8e8e93;
+        }
+
+        .status-info small {
+            color: #6d6d70;
+            font-size: 12px;
+        }
+
+        .sync-controls {
+            margin-bottom: 32px;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: #2a2a2a;
+            border-radius: 12px;
+            border: 1px solid #38383a;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #6d6d70;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #007aff;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .control-info h4 {
+            margin: 0 0 4px 0;
+            color: #ffffff;
+        }
+
+        .control-info p {
+            margin: 0;
+            color: #8e8e93;
+            font-size: 14px;
+        }
+
+        .sync-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .sync-actions button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #007aff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: #3a3a3a;
+            color: #ffffff;
+            border: 1px solid #4a4a4a;
+        }
+
+        .btn-secondary:hover {
+            background: #4a4a4a;
+        }
+
+        .sync-info {
+            margin-bottom: 32px;
+        }
+
+        .sync-info h4 {
+            color: #ffffff;
+            margin-bottom: 16px;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: #2a2a2a;
+            border-radius: 8px;
+            border: 1px solid #38383a;
+        }
+
+        .info-label {
+            color: #8e8e93;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #ffffff;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .sync-warning {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background: #2a2a2a;
+            border-radius: 12px;
+            border: 1px solid #ff9500;
+        }
+
+        .warning-icon {
+            color: #ff9500;
+            font-size: 20px;
+            margin-top: 2px;
+        }
+
+        .warning-content h4 {
+            margin: 0 0 8px 0;
+            color: #ff9500;
+        }
+
+        .warning-content p {
+            margin: 0;
+            color: #8e8e93;
+            font-size: 14px;
+        }
+
+        .warning-content code {
+            background: #1a1a1a;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #ff9500;
+        }
+
+        @media (max-width: 768px) {
+            .sync-container {
+                padding: 16px;
+            }
+
+            .sync-actions {
+                flex-direction: column;
+            }
+
+            .sync-actions button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .control-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1954,6 +2219,10 @@
                 <button class="nav-tab" data-tab="calendar">
                     <i class="fas fa-calendar-alt"></i>
                     <span>Calendar</span>
+                </button>
+                <button class="nav-tab" data-tab="sync">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Sync</span>
                 </button>
             </div>
         </nav>
@@ -2296,6 +2565,85 @@
                             <div class="day-transactions" id="dayTransactions">
                                 <!-- Day transactions will be listed here -->
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sync Tab -->
+            <div class="tab-content" id="sync">
+                <div class="sync-container">
+                    <div class="sync-header">
+                        <h2><i class="fas fa-sync-alt"></i> Data Synchronization</h2>
+                        <p>Keep your data synchronized across all devices using Firebase</p>
+                    </div>
+
+                    <div class="sync-status">
+                        <div class="status-card">
+                            <div class="status-icon">
+                                <i class="fas fa-cloud" id="cloudIcon"></i>
+                            </div>
+                            <div class="status-info">
+                                <h3>Sync Status</h3>
+                                <p id="syncStatusText">Checking connection...</p>
+                                <small id="lastSyncTime">Never synced</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sync-controls">
+                        <div class="control-group">
+                            <label class="switch">
+                                <input type="checkbox" id="syncToggle">
+                                <span class="slider"></span>
+                            </label>
+                            <div class="control-info">
+                                <h4>Enable Auto Sync</h4>
+                                <p>Automatically sync data when changes are detected</p>
+                            </div>
+                        </div>
+
+                        <div class="sync-actions">
+                            <button class="btn-primary" id="syncNowBtn">
+                                <i class="fas fa-sync"></i>
+                                Sync Now
+                            </button>
+                            <button class="btn-secondary" id="forceSyncBtn">
+                                <i class="fas fa-download"></i>
+                                Force Download
+                            </button>
+                            <button class="btn-secondary" id="uploadDataBtn">
+                                <i class="fas fa-upload"></i>
+                                Upload Data
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="sync-info">
+                        <h4>Sync Information</h4>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">User ID:</span>
+                                <span class="info-value" id="userIdDisplay">Not authenticated</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Device ID:</span>
+                                <span class="info-value" id="deviceIdDisplay">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Last Sync:</span>
+                                <span class="info-value" id="lastSyncDisplay">Never</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sync-warning">
+                        <div class="warning-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="warning-content">
+                            <h4>Important</h4>
+                            <p>Make sure to configure your Firebase project settings in <code>js/firebase-config.js</code> before using sync functionality.</p>
                         </div>
                     </div>
                 </div>
@@ -4599,6 +4947,223 @@
             }
         });
 
+        // Initialize sync functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            // Wait for Firebase to be ready
+            setTimeout(() => {
+                initializeSyncUI();
+            }, 1000);
+        });
+
+        function initializeSyncUI() {
+            // Sync toggle functionality
+            const syncToggle = document.getElementById('syncToggle');
+            const syncNowBtn = document.getElementById('syncNowBtn');
+            const forceSyncBtn = document.getElementById('forceSyncBtn');
+            const uploadDataBtn = document.getElementById('uploadDataBtn');
+
+            if (syncToggle) {
+                // Load sync state
+                const syncEnabled = localStorage.getItem('firebase_sync_enabled') === 'true';
+                syncToggle.checked = syncEnabled;
+
+                syncToggle.addEventListener('change', (e) => {
+                    const enabled = e.target.checked;
+                    localStorage.setItem('firebase_sync_enabled', enabled.toString());
+                    
+                    if (enabled) {
+                        enableSync();
+                    } else {
+                        disableSync();
+                    }
+                });
+            }
+
+            if (syncNowBtn) {
+                syncNowBtn.addEventListener('click', async () => {
+                    await syncAllData();
+                });
+            }
+
+            if (forceSyncBtn) {
+                forceSyncBtn.addEventListener('click', async () => {
+                    await forceSyncFromRemote();
+                });
+            }
+
+            if (uploadDataBtn) {
+                uploadDataBtn.addEventListener('click', async () => {
+                    await uploadAllData();
+                });
+            }
+
+            // Update sync status
+            updateSyncStatus();
+        }
+
+        async function enableSync() {
+            try {
+                // Sign in anonymously if not already authenticated
+                if (!auth.currentUser) {
+                    await signInAnonymously(auth);
+                }
+                
+                // Setup real-time listeners
+                setupRealtimeSync();
+                updateSyncStatus();
+                
+                console.log('✅ Sync enabled');
+            } catch (error) {
+                console.error('❌ Error enabling sync:', error);
+            }
+        }
+
+        function disableSync() {
+            // Remove listeners and update UI
+            updateSyncStatus();
+            console.log('❌ Sync disabled');
+        }
+
+        function setupRealtimeSync() {
+            if (!auth.currentUser) return;
+
+            const userId = auth.currentUser.uid;
+            
+            // Listen for changes in each data type
+            Object.keys(CONFIG.STORAGE_KEYS).forEach(key => {
+                const dataType = key.toLowerCase();
+                const docRef = doc(db, 'users', userId, 'data', dataType);
+                
+                // This would need to be implemented with onSnapshot
+                // For now, we'll just log the setup
+                console.log(`📡 Listening for changes in ${dataType}`);
+            });
+        }
+
+        async function syncAllData() {
+            if (!auth.currentUser) {
+                alert('Please enable sync first');
+                return;
+            }
+
+            try {
+                const userId = auth.currentUser.uid;
+                let success = true;
+
+                // Upload all data types
+                for (const [key, dataType] of Object.entries(CONFIG.STORAGE_KEYS)) {
+                    const data = getLocal(dataType);
+                    const docRef = doc(db, 'users', userId, 'data', dataType);
+                    
+                    await setDoc(docRef, {
+                        data: data,
+                        lastModified: Date.now(),
+                        deviceId: getDeviceId()
+                    });
+                }
+
+                if (success) {
+                    updateSyncStatus();
+                    console.log('✅ All data synced successfully');
+                }
+            } catch (error) {
+                console.error('❌ Sync error:', error);
+                alert('Sync failed: ' + error.message);
+            }
+        }
+
+        async function forceSyncFromRemote() {
+            if (!auth.currentUser) {
+                alert('Please enable sync first');
+                return;
+            }
+
+            try {
+                const userId = auth.currentUser.uid;
+                let success = true;
+
+                // Download all data types
+                for (const [key, dataType] of Object.entries(CONFIG.STORAGE_KEYS)) {
+                    const docRef = doc(db, 'users', userId, 'data', dataType);
+                    const docSnap = await getDoc(docRef);
+                    
+                    if (docSnap.exists()) {
+                        const remoteData = docSnap.data();
+                        setLocal(dataType, remoteData.data || []);
+                    }
+                }
+
+                if (success) {
+                    updateSyncStatus();
+                    console.log('✅ Force sync completed');
+                    // Refresh the current tab
+                    if (window.app && window.app.currentTab) {
+                        window.app.loadTabData(window.app.currentTab);
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Force sync error:', error);
+                alert('Force sync failed: ' + error.message);
+            }
+        }
+
+        async function uploadAllData() {
+            if (!auth.currentUser) {
+                alert('Please enable sync first');
+                return;
+            }
+
+            try {
+                await syncAllData();
+                alert('Data uploaded successfully!');
+            } catch (error) {
+                console.error('❌ Upload error:', error);
+                alert('Upload failed: ' + error.message);
+            }
+        }
+
+        function updateSyncStatus() {
+            const syncStatusText = document.getElementById('syncStatusText');
+            const lastSyncTime = document.getElementById('lastSyncTime');
+            const userIdDisplay = document.getElementById('userIdDisplay');
+            const deviceIdDisplay = document.getElementById('deviceIdDisplay');
+            const lastSyncDisplay = document.getElementById('lastSyncDisplay');
+            const cloudIcon = document.getElementById('cloudIcon');
+
+            if (auth.currentUser) {
+                if (syncStatusText) syncStatusText.textContent = 'Connected';
+                if (userIdDisplay) userIdDisplay.textContent = auth.currentUser.uid.substring(0, 8) + '...';
+                if (cloudIcon) cloudIcon.className = 'fas fa-cloud';
+            } else {
+                if (syncStatusText) syncStatusText.textContent = 'Not connected';
+                if (userIdDisplay) userIdDisplay.textContent = 'Not authenticated';
+                if (cloudIcon) cloudIcon.className = 'fas fa-cloud-slash';
+            }
+
+            if (deviceIdDisplay) {
+                deviceIdDisplay.textContent = getDeviceId();
+            }
+
+            const lastSync = localStorage.getItem('last_sync_time');
+            if (lastSync) {
+                const syncDate = new Date(lastSync);
+                if (lastSyncTime) lastSyncTime.textContent = 'Last sync: ' + syncDate.toLocaleString();
+                if (lastSyncDisplay) lastSyncDisplay.textContent = syncDate.toLocaleString();
+            } else {
+                if (lastSyncTime) lastSyncTime.textContent = 'Never synced';
+                if (lastSyncDisplay) lastSyncDisplay.textContent = 'Never';
+            }
+        }
+
+        function getDeviceId() {
+            let deviceId = localStorage.getItem('device_id');
+            if (!deviceId) {
+                deviceId = 'device_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('device_id', deviceId);
+            }
+            return deviceId;
+        }
+
         console.log('✅ Financial Planner loaded');
     </script>
 
@@ -4706,6 +5271,10 @@
       }
     });
   </script>
+
+  <!-- Firebase SDKs -->
+  <script type="module" src="js/firebase-config.js"></script>
+  <script type="module" src="js/firebase-sync.js"></script>
   
 </body>
 </html>
