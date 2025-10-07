@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Financial Planner</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>ðŸ’°</text></svg>">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -2239,21 +2239,21 @@
                                 <i class="fas fa-arrow-up"></i>
                                 <span>Income</span>
                             </div>
-                            <div class="card-amount" id="totalIncome">€0.00</div>
+                            <div class="card-amount" id="totalIncome">â‚¬0.00</div>
                         </div>
                         <div class="balance-card expense">
                             <div class="card-header">
                                 <i class="fas fa-arrow-down"></i>
                                 <span>Expenses</span>
                             </div>
-                            <div class="card-amount" id="totalExpense">€0.00</div>
+                            <div class="card-amount" id="totalExpense">â‚¬0.00</div>
                         </div>
                         <div class="balance-card balance">
                             <div class="card-header">
                                 <i class="fas fa-wallet"></i>
                                 <span>Balance</span>
                             </div>
-                            <div class="card-amount" id="totalBalance">€0.00</div>
+                            <div class="card-amount" id="totalBalance">â‚¬0.00</div>
                         </div>
                     </div>
 
@@ -2369,21 +2369,21 @@
                             <i class="fas fa-arrow-up"></i>
                             <span>Total Income</span>
                         </div>
-                        <div class="summary-amount" id="filteredIncome">€0.00</div>
+                        <div class="summary-amount" id="filteredIncome">â‚¬0.00</div>
                     </div>
                     <div class="summary-card expense">
                         <div class="summary-header">
                             <i class="fas fa-arrow-down"></i>
                             <span>Total Expenses</span>
                         </div>
-                        <div class="summary-amount" id="filteredExpense">€0.00</div>
+                        <div class="summary-amount" id="filteredExpense">â‚¬0.00</div>
                     </div>
                     <div class="summary-card balance">
                         <div class="summary-header">
                             <i class="fas fa-wallet"></i>
                             <span>Net Balance</span>
                         </div>
-                        <div class="summary-amount" id="filteredBalance">€0.00</div>
+                        <div class="summary-amount" id="filteredBalance">â‚¬0.00</div>
                     </div>
                 </div>
                 
@@ -2500,7 +2500,7 @@
                     <div class="calendar-header">
                         <button class="btn-secondary calendar-nav-btn" id="calendarBackBtn" style="display: none;">
                             <i class="fas fa-arrow-left"></i>
-                            <span id="calendarBackText">Año</span>
+                            <span id="calendarBackText">AÃ±o</span>
                         </button>
                         <h2 class="calendar-title" id="calendarTitle">2024</h2>
                         <div class="calendar-controls">
@@ -2554,11 +2554,11 @@
                             </div>
                             <div class="day-summary">
                                 <div class="day-income">
-                                    <span class="amount" id="dayIncome">€0.00</span>
+                                    <span class="amount" id="dayIncome">â‚¬0.00</span>
                                     <span class="label">Income</span>
                                 </div>
                                 <div class="day-expense">
-                                    <span class="amount" id="dayExpense">€0.00</span>
+                                    <span class="amount" id="dayExpense">â‚¬0.00</span>
                                     <span class="label">Expenses</span>
                                 </div>
                             </div>
@@ -2850,7 +2850,7 @@
 
     <script>
         // Financial Planner - Complete Working Version
-        console.log('🚀 Starting Financial Planner...');
+        console.log('ðŸš€ Starting Financial Planner...');
 
         class FinancialPlanner {
             constructor() {
@@ -2865,11 +2865,11 @@
                 };
                 this.setupEventListeners();
                 this.showNotification('Application started successfully');
-                console.log('✅ Financial Planner ready!');
+                console.log('âœ… Financial Planner ready!');
             }
 
             setupEventListeners() {
-                console.log('🎯 Setting up event listeners...');
+                console.log('ðŸŽ¯ Setting up event listeners...');
 
                 // Navigation tabs
                 document.querySelectorAll('.nav-tab').forEach(tab => {
@@ -3037,11 +3037,11 @@
                     });
                 });
 
-                console.log('✅ Event listeners ready!');
+                console.log('âœ… Event listeners ready!');
             }
 
             showTab(tabName) {
-                console.log(`🔄 Showing tab: ${tabName}`);
+                console.log(`ðŸ”„ Showing tab: ${tabName}`);
 
                 // Add loading animation to current tab
                 const currentTab = document.querySelector('.tab-content.active');
@@ -3134,9 +3134,9 @@
                 
                 const totalBalance = income - expense;
                 
-                document.getElementById('totalIncome').textContent = `€${income.toFixed(2)}`;
-                document.getElementById('totalExpense').textContent = `€${expense.toFixed(2)}`;
-                document.getElementById('totalBalance').textContent = `€${totalBalance.toFixed(2)}`;
+                document.getElementById('totalIncome').textContent = `â‚¬${income.toFixed(2)}`;
+                document.getElementById('totalExpense').textContent = `â‚¬${expense.toFixed(2)}`;
+                document.getElementById('totalBalance').textContent = `â‚¬${totalBalance.toFixed(2)}`;
                 
                 // Load recent transactions
                 const recentTransactions = transactions.slice(-5).reverse();
@@ -3244,7 +3244,7 @@
                                     </div>
                                 </div>
                                 <div class="movement-amount ${item.type}">
-                                    ${item.type === 'income' ? '+' : '-'}€${Math.abs(item.amount || 0).toFixed(2)}
+                                    ${item.type === 'income' ? '+' : '-'}â‚¬${Math.abs(item.amount || 0).toFixed(2)}
                                 </div>
                                 <div class="movement-actions">
                                     <button class="btn-edit" onclick="app.editMovement('${item.id}')">
@@ -3279,7 +3279,7 @@
                                 <div class="item-title">${item.name || 'No name'}</div>
                                 <div class="item-details">Type: ${item.type || 'Not specified'}</div>
                                 <div class="item-details">Linked to: ${personName}</div>
-                                <div class="account-balance ${balanceClass}">€${balance.toFixed(2)}</div>
+                                <div class="account-balance ${balanceClass}">â‚¬${balance.toFixed(2)}</div>
                             </div>
                             <div class="item-actions">
                                 <button onclick="app.editAccount('${item.id}')" class="btn-edit" style="padding: 4px 8px; font-size: 12px;">Edit</button>
@@ -3307,12 +3307,12 @@
                             <div class="item-info">
                                 <div class="item-title">${item.description || 'Transfer'}</div>
                                 <div class="item-details">
-                                    From: ${fromAccount?.name || 'Unknown'} → To: ${toAccount?.name || 'Unknown'}
+                                    From: ${fromAccount?.name || 'Unknown'} â†’ To: ${toAccount?.name || 'Unknown'}
                                     <br>Date: ${item.date || 'No date'}
                                 </div>
                             </div>
                             <div class="movement-amount">
-                                €${Math.abs(item.amount || 0).toFixed(2)}
+                                â‚¬${Math.abs(item.amount || 0).toFixed(2)}
                             </div>
                             <div class="item-actions">
                                 <button onclick="app.deleteItem('transfers', '${item.id}')" class="btn-danger" style="padding: 4px 8px; font-size: 12px;">Delete</button>
@@ -3990,17 +3990,17 @@
 
             createSampleData() {
                 const samplePeople = [
-                    { id: 'person1', name: 'Juan Pérez', createdAt: new Date().toISOString() },
-                    { id: 'person2', name: 'María García', createdAt: new Date().toISOString() }
+                    { id: 'person1', name: 'Juan PÃ©rez', createdAt: new Date().toISOString() },
+                    { id: 'person2', name: 'MarÃ­a GarcÃ­a', createdAt: new Date().toISOString() }
                 ];
 
                 const sampleAccounts = [
                     { id: 'account1', name: 'Cuenta Corriente', type: 'checking', initialBalance: 1000, createdAt: new Date().toISOString() },
-                    { id: 'account2', name: 'Tarjeta de Crédito', type: 'credit', initialBalance: 0, createdAt: new Date().toISOString() }
+                    { id: 'account2', name: 'Tarjeta de CrÃ©dito', type: 'credit', initialBalance: 0, createdAt: new Date().toISOString() }
                 ];
 
                 const sampleCategories = [
-                    { id: 'cat1', name: 'Alimentación', icon: 'fas fa-utensils', type: 'expense', createdAt: new Date().toISOString() },
+                    { id: 'cat1', name: 'AlimentaciÃ³n', icon: 'fas fa-utensils', type: 'expense', createdAt: new Date().toISOString() },
                     { id: 'cat2', name: 'Transporte', icon: 'fas fa-car', type: 'expense', createdAt: new Date().toISOString() },
                     { id: 'cat3', name: 'Salario', icon: 'fas fa-money-bill-wave', type: 'income', createdAt: new Date().toISOString() },
                     { id: 'cat4', name: 'Entretenimiento', icon: 'fas fa-gamepad', type: 'expense', createdAt: new Date().toISOString() },
@@ -4125,7 +4125,7 @@
                 }
                 
                 if (categories.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No hay categorías para crear presupuestos</p>';
+                    container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No hay categorÃ­as para crear presupuestos</p>';
                     return;
                 }
                 
@@ -4199,7 +4199,7 @@
                                         <div class="budget-person-row">
                                             <span class="budget-person-name">${pb.person.name}:</span>
                                             <div class="budget-person-spending">
-                                                <span class="budget-person-real">€${pb.realSpending.toFixed(2)}</span>
+                                                <span class="budget-person-real">â‚¬${pb.realSpending.toFixed(2)}</span>
                                                 <span>|</span>
                                                 <input type="number" 
                                                        id="budget-${category.id}-${pb.person.id}"
@@ -4217,11 +4217,11 @@
                                 <div class="budget-totals">
                                     <div class="budget-total-item">
                                         <span class="budget-total-label">Total Projected</span>
-                                        <span class="budget-total-value">€${totalBudget.toFixed(2)}</span>
+                                        <span class="budget-total-value">â‚¬${totalBudget.toFixed(2)}</span>
                                     </div>
                                     <div class="budget-total-item">
                                         <span class="budget-total-label">Total Real</span>
-                                        <span class="budget-total-value ${totalRealSpending > totalBudget ? 'negative' : 'positive'}">€${totalRealSpending.toFixed(2)}</span>
+                                        <span class="budget-total-value ${totalRealSpending > totalBudget ? 'negative' : 'positive'}">â‚¬${totalRealSpending.toFixed(2)}</span>
                                     </div>
                                     <div class="budget-total-item">
                                         <span class="budget-total-label">%</span>
@@ -4426,8 +4426,8 @@
                             <div class="month-name">${monthNames[month]}</div>
                             <div class="month-summary">
                                 ${hasData ? `
-                                    <span class="month-income">+€${monthData.income.toFixed(2)}</span>
-                                    <span class="month-expense">-€${monthData.expense.toFixed(2)}</span>
+                                    <span class="month-income">+â‚¬${monthData.income.toFixed(2)}</span>
+                                    <span class="month-expense">-â‚¬${monthData.expense.toFixed(2)}</span>
                                 ` : `
                                     <span class="no-data-text">No Data</span>
                                 `}
@@ -4478,8 +4478,8 @@
                              ${clickHandler}>
                             <div class="day-number">${currentDate.getDate()}</div>
                             <div class="day-transactions">
-                                ${dayData.income > 0 ? `<div class="day-income">+€${dayData.income.toFixed(0)}</div>` : ''}
-                                ${dayData.expense > 0 ? `<div class="day-expense">-€${dayData.expense.toFixed(0)}</div>` : ''}
+                                ${dayData.income > 0 ? `<div class="day-income">+â‚¬${dayData.income.toFixed(0)}</div>` : ''}
+                                ${dayData.expense > 0 ? `<div class="day-expense">-â‚¬${dayData.expense.toFixed(0)}</div>` : ''}
                             </div>
                         </div>
                     `;
@@ -4494,15 +4494,15 @@
                 
                 // Update day summary
                 const dayData = this.getDayData(date);
-                document.getElementById('dayIncome').textContent = `€${dayData.income.toFixed(2)}`;
-                document.getElementById('dayExpense').textContent = `€${dayData.expense.toFixed(2)}`;
+                document.getElementById('dayIncome').textContent = `â‚¬${dayData.income.toFixed(2)}`;
+                document.getElementById('dayExpense').textContent = `â‚¬${dayData.expense.toFixed(2)}`;
                 
                 // Update transactions list
                 const container = document.getElementById('dayTransactions');
                 if (!container) return;
                 
                 if (dayTransactions.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No hay movimientos en este día</p>';
+                    container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No hay movimientos en este dÃ­a</p>';
                     return;
                 }
                 
@@ -4843,9 +4843,9 @@
                 const netBalance = totalIncome - totalExpense;
 
                 // Update summary cards
-                document.getElementById('filteredIncome').textContent = `€${totalIncome.toFixed(2)}`;
-                document.getElementById('filteredExpense').textContent = `€${totalExpense.toFixed(2)}`;
-                document.getElementById('filteredBalance').textContent = `€${netBalance.toFixed(2)}`;
+                document.getElementById('filteredIncome').textContent = `â‚¬${totalIncome.toFixed(2)}`;
+                document.getElementById('filteredExpense').textContent = `â‚¬${totalExpense.toFixed(2)}`;
+                document.getElementById('filteredBalance').textContent = `â‚¬${netBalance.toFixed(2)}`;
 
                 // Update balance color based on positive/negative
                 const balanceElement = document.getElementById('filteredBalance');
@@ -4930,7 +4930,7 @@
 
         // Initialize app when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('📄 DOM loaded - starting Financial Planner...');
+            console.log('ðŸ“„ DOM loaded - starting Financial Planner...');
             
             try {
                 const app = new FinancialPlanner();
@@ -4939,342 +4939,21 @@
                 // Show dashboard by default
                 app.showTab('dashboard');
                 
-                console.log('🎉 Financial Planner started successfully!');
+                console.log('ðŸŽ‰ Financial Planner started successfully!');
                 
             } catch (error) {
-                console.error('💥 Error starting Financial Planner:', error);
+                console.error('ðŸ’¥ Error starting Financial Planner:', error);
                 alert('Error starting application: ' + error.message);
             }
         });
 
-        // Initialize sync functionality
-        document.addEventListener('DOMContentLoaded', () => {
-            // Wait for Firebase to be ready
-            setTimeout(() => {
-                initializeSyncUI();
-            }, 1000);
-        });
-
-        function initializeSyncUI() {
-            // Sync toggle functionality
-            const syncToggle = document.getElementById('syncToggle');
-            const syncNowBtn = document.getElementById('syncNowBtn');
-            const forceSyncBtn = document.getElementById('forceSyncBtn');
-            const uploadDataBtn = document.getElementById('uploadDataBtn');
-
-            if (syncToggle) {
-                // Load sync state
-                const syncEnabled = localStorage.getItem('firebase_sync_enabled') === 'true';
-                syncToggle.checked = syncEnabled;
-
-                syncToggle.addEventListener('change', (e) => {
-                    const enabled = e.target.checked;
-                    localStorage.setItem('firebase_sync_enabled', enabled.toString());
-                    
-                    if (enabled) {
-                        enableSync();
-                    } else {
-                        disableSync();
-                    }
-                });
-            }
-
-            if (syncNowBtn) {
-                syncNowBtn.addEventListener('click', async () => {
-                    await syncAllData();
-                });
-            }
-
-            if (forceSyncBtn) {
-                forceSyncBtn.addEventListener('click', async () => {
-                    await forceSyncFromRemote();
-                });
-            }
-
-            if (uploadDataBtn) {
-                uploadDataBtn.addEventListener('click', async () => {
-                    await uploadAllData();
-                });
-            }
-
-            // Update sync status
-            updateSyncStatus();
-        }
-
-        async function enableSync() {
-            try {
-                // Sign in anonymously if not already authenticated
-                if (!auth.currentUser) {
-                    await signInAnonymously(auth);
-                }
-                
-                // Setup real-time listeners
-                setupRealtimeSync();
-                updateSyncStatus();
-                
-                console.log('✅ Sync enabled');
-            } catch (error) {
-                console.error('❌ Error enabling sync:', error);
-            }
-        }
-
-        function disableSync() {
-            // Remove listeners and update UI
-            updateSyncStatus();
-            console.log('❌ Sync disabled');
-        }
-
-        function setupRealtimeSync() {
-            if (!auth.currentUser) return;
-
-            const userId = auth.currentUser.uid;
-            
-            // Listen for changes in each data type
-            Object.keys(CONFIG.STORAGE_KEYS).forEach(key => {
-                const dataType = key.toLowerCase();
-                const docRef = doc(db, 'users', userId, 'data', dataType);
-                
-                // This would need to be implemented with onSnapshot
-                // For now, we'll just log the setup
-                console.log(`📡 Listening for changes in ${dataType}`);
-            });
-        }
-
-        async function syncAllData() {
-            if (!auth.currentUser) {
-                alert('Please enable sync first');
-                return;
-            }
-
-            try {
-                const userId = auth.currentUser.uid;
-                let success = true;
-
-                // Upload all data types
-                for (const [key, dataType] of Object.entries(CONFIG.STORAGE_KEYS)) {
-                    const data = getLocal(dataType);
-                    const docRef = doc(db, 'users', userId, 'data', dataType);
-                    
-                    await setDoc(docRef, {
-                        data: data,
-                        lastModified: Date.now(),
-                        deviceId: getDeviceId()
-                    });
-                }
-
-                if (success) {
-                    updateSyncStatus();
-                    console.log('✅ All data synced successfully');
-                }
-            } catch (error) {
-                console.error('❌ Sync error:', error);
-                alert('Sync failed: ' + error.message);
-            }
-        }
-
-        async function forceSyncFromRemote() {
-            if (!auth.currentUser) {
-                alert('Please enable sync first');
-                return;
-            }
-
-            try {
-                const userId = auth.currentUser.uid;
-                let success = true;
-
-                // Download all data types
-                for (const [key, dataType] of Object.entries(CONFIG.STORAGE_KEYS)) {
-                    const docRef = doc(db, 'users', userId, 'data', dataType);
-                    const docSnap = await getDoc(docRef);
-                    
-                    if (docSnap.exists()) {
-                        const remoteData = docSnap.data();
-                        setLocal(dataType, remoteData.data || []);
-                    }
-                }
-
-                if (success) {
-                    updateSyncStatus();
-                    console.log('✅ Force sync completed');
-                    // Refresh the current tab
-                    if (window.app && window.app.currentTab) {
-                        window.app.loadTabData(window.app.currentTab);
-                    }
-                }
-            } catch (error) {
-                console.error('❌ Force sync error:', error);
-                alert('Force sync failed: ' + error.message);
-            }
-        }
-
-        async function uploadAllData() {
-            if (!auth.currentUser) {
-                alert('Please enable sync first');
-                return;
-            }
-
-            try {
-                await syncAllData();
-                alert('Data uploaded successfully!');
-            } catch (error) {
-                console.error('❌ Upload error:', error);
-                alert('Upload failed: ' + error.message);
-            }
-        }
-
-        function updateSyncStatus() {
-            const syncStatusText = document.getElementById('syncStatusText');
-            const lastSyncTime = document.getElementById('lastSyncTime');
-            const userIdDisplay = document.getElementById('userIdDisplay');
-            const deviceIdDisplay = document.getElementById('deviceIdDisplay');
-            const lastSyncDisplay = document.getElementById('lastSyncDisplay');
-            const cloudIcon = document.getElementById('cloudIcon');
-
-            if (auth.currentUser) {
-                if (syncStatusText) syncStatusText.textContent = 'Connected';
-                if (userIdDisplay) userIdDisplay.textContent = auth.currentUser.uid.substring(0, 8) + '...';
-                if (cloudIcon) cloudIcon.className = 'fas fa-cloud';
-            } else {
-                if (syncStatusText) syncStatusText.textContent = 'Not connected';
-                if (userIdDisplay) userIdDisplay.textContent = 'Not authenticated';
-                if (cloudIcon) cloudIcon.className = 'fas fa-cloud-slash';
-            }
-
-            if (deviceIdDisplay) {
-                deviceIdDisplay.textContent = getDeviceId();
-            }
-
-            const lastSync = localStorage.getItem('last_sync_time');
-            if (lastSync) {
-                const syncDate = new Date(lastSync);
-                if (lastSyncTime) lastSyncTime.textContent = 'Last sync: ' + syncDate.toLocaleString();
-                if (lastSyncDisplay) lastSyncDisplay.textContent = syncDate.toLocaleString();
-            } else {
-                if (lastSyncTime) lastSyncTime.textContent = 'Never synced';
-                if (lastSyncDisplay) lastSyncDisplay.textContent = 'Never';
-            }
-        }
-
-        function getDeviceId() {
-            let deviceId = localStorage.getItem('device_id');
-            if (!deviceId) {
-                deviceId = 'device_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('device_id', deviceId);
-            }
-            return deviceId;
-        }
-
         console.log('✅ Financial Planner loaded');
     </script>
-
-<script type="module">
-    // Firebase SDKs (modular)
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-    import { getFirestore, initializeFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-  
-    const firebaseConfig = {
-      apiKey: "AIzaSyC8r6olB67MWifBPVtyt72QAHIVkWhStqA",
-      authDomain: "financial-planner-bba37.firebaseapp.com",
-      projectId: "financial-planner-bba37",
-      storageBucket: "financial-planner-bba37.firebasestorage.app",
-      messagingSenderId: "1035058509819",
-      appId: "1:1035058509819:web:785dd8584f95f0d811bd5e",
-      measurementId: "G-M24XYZD0EW"
-    };
-  
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true });
-  
-    // Utilidades
-    function getLocal(key) {
-      return JSON.parse(localStorage.getItem(key) || '[]');
-    }
-    function setLocal(key, value) {
-      localStorage.setItem(key, JSON.stringify(value || []));
-    }
-  
-    async function saveToCloud(uid) {
-      const payload = {
-        transactions: getLocal('transactions'),
-        people:       getLocal('people'),
-        accounts:     getLocal('accounts'),
-        categories:   getLocal('categories'),
-        budgets:      getLocal('budgets'),
-      };
-      await setDoc(doc(db, 'users', 'financial-planner'), payload, { merge: true });
-    }
-  
-    async function loadFromCloud(uid) {
-      const ref = doc(db, 'users', 'financial-planner');
-      const snap = await getDoc(ref);
-
-      const hasLocalData =
-        getLocal('transactions').length ||
-        getLocal('people').length ||
-        getLocal('accounts').length ||
-        getLocal('categories').length ||
-        getLocal('budgets').length;
-
-      if (!snap.exists()) {
-        // No hay doc en la nube: si hay datos locales, subirlos
-        if (hasLocalData) {
-          await saveToCloud('financial-planner');
-        }
-        return;
-      }
-
-      const data = snap.data() || {};
-      const cloudCount =
-        (data.transactions?.length || 0) +
-        (data.people?.length || 0) +
-        (data.accounts?.length || 0) +
-        (data.categories?.length || 0) +
-        (data.budgets?.length || 0);
-
-      // Si el doc existe pero está vacío y local tiene datos, priorizar local y subir
-      if (cloudCount === 0 && hasLocalData) {
-        await saveToCloud('financial-planner');
-        return;
-      }
-
-      // Tenemos datos en la nube → sobrescribimos localStorage
-      setLocal('transactions', data.transactions || []);
-      setLocal('people',       data.people || []);
-      setLocal('accounts',     data.accounts || []);
-      setLocal('categories',   data.categories || []);
-      setLocal('budgets',      data.budgets || []);
-    }
-  
-    // Exponer guardado para usarlo desde tu app
-    window.firebaseSync = {
-      ready: false,
-      save: async () => {
-        if (!window.firebaseSync.ready) return;
-        await saveToCloud('financial-planner');
-      }
-    };
-  
-    // Login anónimo y bootstrap
-    signInAnonymously(auth).catch(console.error);
-  
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) return;
-      window.firebaseSync.uid = user.uid;
-      await loadFromCloud('financial-planner');
-      window.firebaseSync.ready = true;
-
-      // Refresca la pestaña actual si la app ya está cargada
-      if (window.app?.currentTab) {
-        window.app.loadTabData(window.app.currentTab);
-      }
-    });
-  </script>
 
   <!-- Firebase SDKs -->
   <script type="module" src="js/firebase-config.js"></script>
   <script type="module" src="js/firebase-sync.js"></script>
-  
+  <script src="js/sync-ui.js"></script>
+
 </body>
 </html>
