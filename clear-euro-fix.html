@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Euro Symbol</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background: #1a1a1a; color: #ffffff; }
+        h1 { color: #007aff; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .step { margin: 20px 0; padding: 15px; border: 1px solid #38383a; border-radius: 8px; }
+        .button { 
+            background: #007aff; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin: 5px;
+        }
+        .button:hover { background: #0056b3; }
+        .danger { background: #dc3545; }
+        .danger:hover { background: #c82333; }
+        .success { background: #28a745; }
+        .success:hover { background: #1e7e34; }
+        pre { background: #2a2a2a; padding: 15px; border-radius: 8px; overflow-x: auto; }
+        .warning { background: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Fix Euro Symbol Problem</h1>
+        
+        <div class="step">
+            <h3>📊 Current Data Check</h3>
+            <p>First, let's see what data you have:</p>
+            <button class="button" onclick="checkData()">Check Current Data</button>
+            <div id="dataCheck"></div>
+        </div>
+
+        <div class="step">
+            <h3>🧹 Clean Bad Euro Symbols</h3>
+            <div class="warning">
+                ⚠️ This will clean all corrupted euro symbols from your data and replace them with "EUR"
+            </div>
+            <button class="button danger" onclick="cleanEuroSymbols()">Clean Euro Symbols</button>
+            <div id="cleanResult"></div>
+        </div>
+
+        <div class="step">
+            <h3>✅ Verify Fix</h3>
+            <p>After cleaning, verify the data looks correct:</p>
+            <button class="button success" onclick="verifyFix()">Verify Fix</button>
+            <div id="verifyResult"></div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEYS = {
+            TRANSACTIONS: 'transactions',
+            TRANSFERS: 'transfers',
+            PEOPLE: 'people',
+            ACCOUNTS: 'accounts',
+            CATEGORIES: 'categories',
+            BUDGETS: 'budgets',
+            FILTERS: 'savedFilters'
+        };
+
+        function checkData() {
+            const output = document.getElementById('dataCheck');
+            output.innerHTML = '<h4>Current Data Summary:</h4>';
+            
+            Object.keys(STORAGE_KEYS).forEach(key => {
+                const storageKey = STORAGE_KEYS[key];
+                const storedData = localStorage.getItem(storageKey);
+                let data = [];
+                try {
+                    data = storedData ? JSON.parse(storedData) : [];
+                } catch (e) {
+                    output.innerHTML += `<p style="color: red;">Error parsing ${storageKey}: ${e.message}</p>`;
+                    return;
+                }
+
+                output.innerHTML += `<p><strong>${storageKey}:</strong> ${data.length} items</p>`;
+                
+                // Check for bad euro symbols
+                const dataStr = JSON.stringify(data);
+                const badSymbols = dataStr.match(/â‚¬|â€š|â‚¬/g);
+                if (badSymbols) {
+                    output.innerHTML += `<p style="color: orange;">⚠️ Found ${badSymbols.length} corrupted euro symbols</p>`;
+                }
+            });
+        }
+
+        function cleanEuroSymbols() {
+            const result = document.getElementById('cleanResult');
+            result.innerHTML = '<h4>Cleaning in progress...</h4>';
+            
+            let totalCleaned = 0;
+            let totalItems = 0;
+
+            Object.keys(STORAGE_KEYS).forEach(key => {
+                const storageKey = STORAGE_KEYS[key];
+                const storedData = localStorage.getItem(storageKey);
+                
+                if (!storedData) return;
+                
+                try {
+                    let data = JSON.parse(storedData);
+                    let cleaned = 0;
+                    
+                    // Clean each item in the data
+                    data.forEach(item => {
+                        Object.keys(item).forEach(prop => {
+                            if (typeof item[prop] === 'string') {
+                                const original = item[prop];
+                                // Replace corrupted euro symbols with EUR
+                                item[prop] = item[prop].replace(/â‚¬|â€š|â‚¬/g, 'EUR');
+                                if (original !== item[prop]) {
+                                    cleaned++;
+                                }
+                            }
+                        });
+                    });
+                    
+                    // Save cleaned data back to localStorage
+                    localStorage.setItem(storageKey, JSON.stringify(data));
+                    
+                    totalCleaned += cleaned;
+                    totalItems += data.length;
+                    
+                    if (cleaned > 0) {
+                        result.innerHTML += `<p>✅ Cleaned ${cleaned} corrupted symbols in ${storageKey}</p>`;
+                    }
+                    
+                } catch (e) {
+                    result.innerHTML += `<p style="color: red;">❌ Error cleaning ${storageKey}: ${e.message}</p>`;
+                }
+            });
+            
+            result.innerHTML += `<h4>🎉 Cleaning Complete!</h4>`;
+            result.innerHTML += `<p>Total items processed: ${totalItems}</p>`;
+            result.innerHTML += `<p>Total corrupted symbols fixed: ${totalCleaned}</p>`;
+            result.innerHTML += `<p style="color: green;">✅ Your data is now clean! Reload your main app.</p>`;
+        }
+
+        function verifyFix() {
+            const output = document.getElementById('verifyResult');
+            output.innerHTML = '<h4>Verification Results:</h4>';
+            
+            let allClean = true;
+            
+            Object.keys(STORAGE_KEYS).forEach(key => {
+                const storageKey = STORAGE_KEYS[key];
+                const storedData = localStorage.getItem(storageKey);
+                
+                if (!storedData) return;
+                
+                try {
+                    const data = JSON.parse(storedData);
+                    const dataStr = JSON.stringify(data);
+                    const badSymbols = dataStr.match(/â‚¬|â€š|â‚¬/g);
+                    
+                    if (badSymbols) {
+                        output.innerHTML += `<p style="color: red;">❌ ${storageKey}: Still has ${badSymbols.length} corrupted symbols</p>`;
+                        allClean = false;
+                    } else {
+                        output.innerHTML += `<p style="color: green;">✅ ${storageKey}: Clean</p>`;
+                    }
+                } catch (e) {
+                    output.innerHTML += `<p style="color: red;">❌ ${storageKey}: Error - ${e.message}</p>`;
+                    allClean = false;
+                }
+            });
+            
+            if (allClean) {
+                output.innerHTML += `<h4 style="color: green;">🎉 All data is clean!</h4>`;
+                output.innerHTML += `<p>You can now reload your main application and the EUR symbols should display correctly.</p>`;
+            } else {
+                output.innerHTML += `<h4 style="color: orange;">⚠️ Some data still has issues. Try cleaning again.</h4>`;
+            }
+        }
+    </script>
+</body>
+</html>
