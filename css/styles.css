@@ -1789,20 +1789,46 @@ body {
         padding: var(--spacing-md);
     }
     
+    .tab-content {
+        padding: var(--spacing-md);
+        padding-bottom: 80px; /* Space for FAB */
+    }
+    
     .dashboard-grid {
         grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
     }
     
     .balance-cards {
         grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .balance-card {
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .card-amount {
+        font-size: var(--font-size-xl);
+        margin-top: var(--spacing-sm);
     }
     
     .action-buttons {
         grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .action-btn {
+        padding: var(--spacing-lg);
+        font-size: var(--font-size-md);
+        min-height: 56px;
+        border-radius: var(--radius-lg);
     }
     
     .movements-container {
         grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
     }
     
     .movements-sidebar {
@@ -1817,49 +1843,135 @@ body {
     .accounts-grid,
     .categories-grid {
         grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .person-card,
+    .account-card,
+    .category-card {
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-md);
     }
     
     .nav-tabs {
-        padding: var(--spacing-sm);
-        min-height: 50px;
+        padding: var(--spacing-md);
+        min-height: 60px;
+        border-bottom: 2px solid var(--border-color);
     }
     
     .nav-left {
-        gap: var(--spacing-xs);
+        gap: var(--spacing-sm);
     }
     
     .app-title {
-        font-size: var(--font-size-md);
-        margin-right: var(--spacing-sm);
+        font-size: var(--font-size-lg);
+        margin-right: var(--spacing-md);
     }
     
     .nav-tab {
-        padding: var(--spacing-xs) var(--spacing-sm);
-        font-size: var(--font-size-xs);
-        min-height: 32px;
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--font-size-sm);
+        min-height: 40px;
+        border-radius: var(--radius-md);
     }
     
     .nav-tab span {
-        display: none;
+        display: inline;
+        margin-left: var(--spacing-xs);
     }
     
     .nav-tab i {
-        font-size: var(--font-size-sm);
+        font-size: var(--font-size-md);
     }
     
     .modal-content {
         width: 95%;
         margin: var(--spacing-md);
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .form-group {
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .form-group label {
+        font-size: var(--font-size-md);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .form-control {
+        padding: var(--spacing-md);
+        font-size: var(--font-size-md);
+        border-radius: var(--radius-md);
+        min-height: 48px;
     }
     
     .form-actions {
         flex-direction: column;
+        gap: var(--spacing-md);
+    }
+    
+    .btn {
+        padding: var(--spacing-md) var(--spacing-lg);
+        font-size: var(--font-size-md);
+        min-height: 48px;
+        border-radius: var(--radius-md);
     }
     
     .edit-actions {
         position: static;
         transform: none;
-        margin-top: var(--spacing-sm);
+        margin-top: var(--spacing-md);
+        gap: var(--spacing-sm);
+    }
+    
+    .edit-action {
+        padding: var(--spacing-md);
+        min-width: 48px;
+        min-height: 48px;
+    }
+    
+    /* Movement items */
+    .movement-item {
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-md);
+        border-radius: var(--radius-lg);
+    }
+    
+    .movement-amount {
+        font-size: var(--font-size-lg);
+        font-weight: 600;
+    }
+    
+    /* Calendar improvements */
+    .calendar-grid {
+        gap: 2px;
+    }
+    
+    .calendar-day {
+        min-height: 44px;
+        font-size: var(--font-size-sm);
+    }
+    
+    .day-number {
+        font-size: var(--font-size-md);
+        font-weight: 600;
+    }
+    
+    /* Budget improvements */
+    .budget-person {
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .budget-person-name {
+        font-size: var(--font-size-md);
+        font-weight: 600;
+    }
+    
+    .budget-person-spending {
+        font-size: var(--font-size-sm);
     }
 }
 
@@ -1878,10 +1990,279 @@ body {
     }
     
     .fab {
+        bottom: var(--spacing-lg);
+        right: var(--spacing-lg);
+        width: 56px;
+        height: 56px;
+        font-size: var(--font-size-lg);
+    }
+    
+    .tab-content {
+        padding: var(--spacing-sm);
+        padding-bottom: 90px;
+    }
+    
+    .balance-card {
+        padding: var(--spacing-xl);
+        text-align: center;
+    }
+    
+    .card-icon {
+        font-size: var(--font-size-xxl);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .card-label {
+        font-size: var(--font-size-md);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .action-btn {
+        padding: var(--spacing-xl);
+        font-size: var(--font-size-lg);
+        min-height: 64px;
+    }
+    
+    .nav-tabs {
+        padding: var(--spacing-sm);
+        min-height: 56px;
+    }
+    
+    .nav-tab {
+        padding: var(--spacing-md);
+        font-size: var(--font-size-md);
+        min-height: 44px;
+    }
+    
+    .modal-content {
+        width: 98%;
+        margin: var(--spacing-sm);
+        border-radius: var(--radius-lg);
+    }
+    
+    .form-control {
+        padding: var(--spacing-lg);
+        font-size: var(--font-size-lg);
+        min-height: 56px;
+    }
+    
+    .btn {
+        padding: var(--spacing-lg) var(--spacing-xl);
+        font-size: var(--font-size-lg);
+        min-height: 56px;
+    }
+    
+    .movement-item {
+        padding: var(--spacing-xl);
+    }
+    
+    .movement-amount {
+        font-size: var(--font-size-xl);
+    }
+    
+    .calendar-day {
+        min-height: 48px;
+        font-size: var(--font-size-md);
+    }
+    
+    .day-number {
+        font-size: var(--font-size-lg);
+    }
+    
+    .budget-person {
+        padding: var(--spacing-lg);
+    }
+    
+    .budget-person-name {
+        font-size: var(--font-size-lg);
+    }
+    
+    .budget-person-spending {
+        font-size: var(--font-size-md);
+    }
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+    /* Better touch targets */
+    .nav-tab,
+    .action-btn,
+    .btn,
+    .edit-action,
+    .fab {
+        -webkit-tap-highlight-color: rgba(0, 122, 255, 0.3);
+        tap-highlight-color: rgba(0, 122, 255, 0.3);
+    }
+    
+    /* Improve scrolling */
+    .tab-content,
+    .modal-content {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Better spacing for transaction items */
+    .transaction-item {
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-md);
+        border-radius: var(--radius-lg);
+    }
+    
+    .transaction-amount {
+        font-size: var(--font-size-lg);
+        font-weight: 600;
+    }
+    
+    /* Improve form spacing */
+    .form-row {
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .form-row .form-group {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    /* Better modal spacing */
+    .modal-header {
+        padding: var(--spacing-lg);
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .modal-body {
+        padding: var(--spacing-lg);
+    }
+    
+    .modal-footer {
+        padding: var(--spacing-lg);
+        border-top: 1px solid var(--border-color);
+    }
+    
+    /* Improve card layouts */
+    .card {
+        margin-bottom: var(--spacing-lg);
+        border-radius: var(--radius-lg);
+    }
+    
+    .card-header {
+        padding: var(--spacing-lg);
+    }
+    
+    .card-body {
+        padding: var(--spacing-lg);
+    }
+    
+    /* Better list spacing */
+    .list-item {
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-sm);
+        border-radius: var(--radius-md);
+    }
+    
+    /* Improve filter controls */
+    .filter-controls {
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
+        border-radius: var(--radius-lg);
+    }
+    
+    .filter-group {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    /* Better date picker */
+    .date-picker {
+        padding: var(--spacing-md);
+        font-size: var(--font-size-md);
+        min-height: 48px;
+        border-radius: var(--radius-md);
+    }
+    
+    /* Improve summary cards */
+    .summary-card {
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-md);
+        border-radius: var(--radius-lg);
+    }
+    
+    .summary-amount {
+        font-size: var(--font-size-xl);
+        font-weight: 600;
+        margin-top: var(--spacing-sm);
+    }
+    
+    /* Better sync UI */
+    .sync-status {
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-md);
+        border-radius: var(--radius-lg);
+    }
+    
+    .sync-controls {
+        gap: var(--spacing-md);
+    }
+    
+    .sync-btn {
+        padding: var(--spacing-md) var(--spacing-lg);
+        font-size: var(--font-size-md);
+        min-height: 48px;
+        border-radius: var(--radius-md);
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 360px) {
+    .tab-content {
+        padding: var(--spacing-xs);
+        padding-bottom: 100px;
+    }
+    
+    .balance-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .card-amount {
+        font-size: var(--font-size-xl);
+    }
+    
+    .action-btn {
+        padding: var(--spacing-lg);
+        font-size: var(--font-size-md);
+        min-height: 52px;
+    }
+    
+    .nav-tab {
+        padding: var(--spacing-sm);
+        font-size: var(--font-size-sm);
+        min-height: 40px;
+    }
+    
+    .nav-tab span {
+        display: none;
+    }
+    
+    .modal-content {
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+        height: 100vh;
+    }
+    
+    .form-control {
+        padding: var(--spacing-md);
+        font-size: var(--font-size-md);
+        min-height: 48px;
+    }
+    
+    .btn {
+        padding: var(--spacing-md) var(--spacing-lg);
+        font-size: var(--font-size-md);
+        min-height: 48px;
+    }
+    
+    .fab {
+        width: 52px;
+        height: 52px;
         bottom: var(--spacing-md);
         right: var(--spacing-md);
-        width: 48px;
-        height: 48px;
     }
 }
 
