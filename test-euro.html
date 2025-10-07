@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Euro Symbol</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #1a1a1a; color: white; }
+        .test { margin: 10px 0; padding: 10px; background: #333; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Euro Symbol Test</h1>
+    
+    <div class="test">
+        <h3>Direct € symbol</h3>
+        <p>€123.45</p>
+    </div>
+    
+    <div class="test">
+        <h3>Using Utils.formatCurrency</h3>
+        <p id="formatted"></p>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script>
+        // Test the formatCurrency function
+        if (typeof Utils !== 'undefined' && Utils.formatCurrency) {
+            const formatted = Utils.formatCurrency(123.45);
+            document.getElementById('formatted').textContent = formatted;
+            console.log('Formatted currency:', formatted);
+        } else {
+            document.getElementById('formatted').textContent = 'Utils.formatCurrency not available';
+            console.error('Utils or formatCurrency not available');
+        }
+    </script>
+</body>
+</html>
