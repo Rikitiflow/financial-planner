@@ -2240,21 +2240,21 @@
                                 <i class="fas fa-arrow-up"></i>
                                 <span>Income</span>
                             </div>
-                            <div class="card-amount" id="totalIncome">â‚¬0.00</div>
+                            <div class="card-amount" id="totalIncome">€0.00</div>
                         </div>
                         <div class="balance-card expense">
                             <div class="card-header">
                                 <i class="fas fa-arrow-down"></i>
                                 <span>Expenses</span>
                             </div>
-                            <div class="card-amount" id="totalExpense">â‚¬0.00</div>
+                            <div class="card-amount" id="totalExpense">€0.00</div>
                         </div>
                         <div class="balance-card balance">
                             <div class="card-header">
                                 <i class="fas fa-wallet"></i>
                                 <span>Balance</span>
                             </div>
-                            <div class="card-amount" id="totalBalance">â‚¬0.00</div>
+                            <div class="card-amount" id="totalBalance">€0.00</div>
                         </div>
                     </div>
 
@@ -2370,21 +2370,21 @@
                             <i class="fas fa-arrow-up"></i>
                             <span>Total Income</span>
                         </div>
-                        <div class="summary-amount" id="filteredIncome">â‚¬0.00</div>
+                        <div class="summary-amount" id="filteredIncome">€0.00</div>
                     </div>
                     <div class="summary-card expense">
                         <div class="summary-header">
                             <i class="fas fa-arrow-down"></i>
                             <span>Total Expenses</span>
                         </div>
-                        <div class="summary-amount" id="filteredExpense">â‚¬0.00</div>
+                        <div class="summary-amount" id="filteredExpense">€0.00</div>
                     </div>
                     <div class="summary-card balance">
                         <div class="summary-header">
                             <i class="fas fa-wallet"></i>
                             <span>Net Balance</span>
                         </div>
-                        <div class="summary-amount" id="filteredBalance">â‚¬0.00</div>
+                        <div class="summary-amount" id="filteredBalance">€0.00</div>
                     </div>
                 </div>
                 
@@ -2555,11 +2555,11 @@
                             </div>
                             <div class="day-summary">
                                 <div class="day-income">
-                                    <span class="amount" id="dayIncome">â‚¬0.00</span>
+                                    <span class="amount" id="dayIncome">€0.00</span>
                                     <span class="label">Income</span>
                                 </div>
                                 <div class="day-expense">
-                                    <span class="amount" id="dayExpense">â‚¬0.00</span>
+                                    <span class="amount" id="dayExpense">€0.00</span>
                                     <span class="label">Expenses</span>
                                 </div>
                             </div>
@@ -3143,9 +3143,9 @@
                 
                 const totalBalance = income - expense;
                 
-                document.getElementById('totalIncome').textContent = `â‚¬${income.toFixed(2)}`;
-                document.getElementById('totalExpense').textContent = `â‚¬${expense.toFixed(2)}`;
-                document.getElementById('totalBalance').textContent = `â‚¬${totalBalance.toFixed(2)}`;
+                document.getElementById('totalIncome').textContent = `€${income.toFixed(2)}`;
+                document.getElementById('totalExpense').textContent = `€${expense.toFixed(2)}`;
+                document.getElementById('totalBalance').textContent = `€${totalBalance.toFixed(2)}`;
                 
                 // Load recent transactions
                 const recentTransactions = transactions.slice(-5).reverse();
@@ -3253,7 +3253,7 @@
                                     </div>
                                 </div>
                                 <div class="movement-amount ${item.type}">
-                                    ${item.type === 'income' ? '+' : '-'}â‚¬${Math.abs(item.amount || 0).toFixed(2)}
+                                    ${item.type === 'income' ? '+' : '-'}€${Math.abs(item.amount || 0).toFixed(2)}
                                 </div>
                                 <div class="movement-actions">
                                     <button class="btn-edit" onclick="app.editMovement('${item.id}')">
@@ -3288,7 +3288,7 @@
                                 <div class="item-title">${item.name || 'No name'}</div>
                                 <div class="item-details">Type: ${item.type || 'Not specified'}</div>
                                 <div class="item-details">Linked to: ${personName}</div>
-                                <div class="account-balance ${balanceClass}">â‚¬${balance.toFixed(2)}</div>
+                                <div class="account-balance ${balanceClass}">€${balance.toFixed(2)}</div>
                             </div>
                             <div class="item-actions">
                                 <button onclick="app.editAccount('${item.id}')" class="btn-edit" style="padding: 4px 8px; font-size: 12px;">Edit</button>
@@ -3321,7 +3321,7 @@
                                 </div>
                             </div>
                             <div class="movement-amount">
-                                â‚¬${Math.abs(item.amount || 0).toFixed(2)}
+                                €${Math.abs(item.amount || 0).toFixed(2)}
                             </div>
                             <div class="item-actions">
                                 <button onclick="app.deleteItem('transfers', '${item.id}')" class="btn-danger" style="padding: 4px 8px; font-size: 12px;">Delete</button>
@@ -4208,7 +4208,7 @@
                                         <div class="budget-person-row">
                                             <span class="budget-person-name">${pb.person.name}:</span>
                                             <div class="budget-person-spending">
-                                                <span class="budget-person-real">â‚¬${pb.realSpending.toFixed(2)}</span>
+                                                <span class="budget-person-real">€${pb.realSpending.toFixed(2)}</span>
                                                 <span>|</span>
                                                 <input type="number" 
                                                        id="budget-${category.id}-${pb.person.id}"
@@ -4226,11 +4226,11 @@
                                 <div class="budget-totals">
                                     <div class="budget-total-item">
                                         <span class="budget-total-label">Total Projected</span>
-                                        <span class="budget-total-value">â‚¬${totalBudget.toFixed(2)}</span>
+                                        <span class="budget-total-value">€${totalBudget.toFixed(2)}</span>
                                     </div>
                                     <div class="budget-total-item">
                                         <span class="budget-total-label">Total Real</span>
-                                        <span class="budget-total-value ${totalRealSpending > totalBudget ? 'negative' : 'positive'}">â‚¬${totalRealSpending.toFixed(2)}</span>
+                                        <span class="budget-total-value ${totalRealSpending > totalBudget ? 'negative' : 'positive'}">€${totalRealSpending.toFixed(2)}</span>
                                     </div>
                                     <div class="budget-total-item">
                                         <span class="budget-total-label">%</span>
@@ -4435,8 +4435,8 @@
                             <div class="month-name">${monthNames[month]}</div>
                             <div class="month-summary">
                                 ${hasData ? `
-                                    <span class="month-income">+â‚¬${monthData.income.toFixed(2)}</span>
-                                    <span class="month-expense">-â‚¬${monthData.expense.toFixed(2)}</span>
+                                    <span class="month-income">+€${monthData.income.toFixed(2)}</span>
+                                    <span class="month-expense">-€${monthData.expense.toFixed(2)}</span>
                                 ` : `
                                     <span class="no-data-text">No Data</span>
                                 `}
@@ -4487,8 +4487,8 @@
                              ${clickHandler}>
                             <div class="day-number">${currentDate.getDate()}</div>
                             <div class="day-transactions">
-                                ${dayData.income > 0 ? `<div class="day-income">+â‚¬${dayData.income.toFixed(0)}</div>` : ''}
-                                ${dayData.expense > 0 ? `<div class="day-expense">-â‚¬${dayData.expense.toFixed(0)}</div>` : ''}
+                                ${dayData.income > 0 ? `<div class="day-income">+€${dayData.income.toFixed(0)}</div>` : ''}
+                                ${dayData.expense > 0 ? `<div class="day-expense">-€${dayData.expense.toFixed(0)}</div>` : ''}
                             </div>
                         </div>
                     `;
@@ -4503,8 +4503,8 @@
                 
                 // Update day summary
                 const dayData = this.getDayData(date);
-                document.getElementById('dayIncome').textContent = `â‚¬${dayData.income.toFixed(2)}`;
-                document.getElementById('dayExpense').textContent = `â‚¬${dayData.expense.toFixed(2)}`;
+                document.getElementById('dayIncome').textContent = `€${dayData.income.toFixed(2)}`;
+                document.getElementById('dayExpense').textContent = `€${dayData.expense.toFixed(2)}`;
                 
                 // Update transactions list
                 const container = document.getElementById('dayTransactions');
@@ -4852,9 +4852,9 @@
                 const netBalance = totalIncome - totalExpense;
 
                 // Update summary cards
-                document.getElementById('filteredIncome').textContent = `â‚¬${totalIncome.toFixed(2)}`;
-                document.getElementById('filteredExpense').textContent = `â‚¬${totalExpense.toFixed(2)}`;
-                document.getElementById('filteredBalance').textContent = `â‚¬${netBalance.toFixed(2)}`;
+                document.getElementById('filteredIncome').textContent = `€${totalIncome.toFixed(2)}`;
+                document.getElementById('filteredExpense').textContent = `€${totalExpense.toFixed(2)}`;
+                document.getElementById('filteredBalance').textContent = `€${netBalance.toFixed(2)}`;
 
                 // Update balance color based on positive/negative
                 const balanceElement = document.getElementById('filteredBalance');

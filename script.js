@@ -2314,11 +2314,12 @@ class FinancialPlanner {
         return this.categories.find(c => c.id === id);
     }
 
-    formatCurrency(amount) {
-        return new Intl.NumberFormat('es-ES', {
-            style: 'currency',
-            currency: 'EUR'
-        }).format(amount);
+    formatCurrency(amount, currency = 'EUR') {
+        const numAmount = parseFloat(amount);
+        if (isNaN(numAmount)) return '0.00 €';
+        
+        const formatted = numAmount.toFixed(2);
+        return formatted + ' €';
     }
 
     formatDate(dateString) {
