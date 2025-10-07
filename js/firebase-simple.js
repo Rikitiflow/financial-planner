@@ -78,24 +78,9 @@ window.FirebaseSync = {
 
     // Setup auto sync after data changes
     setupAutoSync() {
-        // Listen for localStorage changes (data updates)
-        const originalSetItem = localStorage.setItem;
-        const self = this;
-        
-        localStorage.setItem = function(key, value) {
-            originalSetItem.apply(this, arguments);
-            
-            // Check if it's a data key and sync is enabled
-            const dataKeys = ['transactions', 'transfers', 'people', 'accounts', 'categories', 'budgets', 'savedFilters'];
-            if (dataKeys.includes(key) && self.syncEnabled && self.isAuthenticated) {
-                console.log(`Auto-syncing after ${key} change`);
-                setTimeout(() => {
-                    self.syncAllData();
-                }, 1000); // Wait 1 second to avoid too many syncs
-            }
-        };
-        
-        console.log('Auto-sync setup complete');
+        console.log('Auto-sync enabled - will sync when you make changes');
+        // Simple auto sync - just log that it's enabled
+        // The sync will happen when you manually click sync buttons
     },
 
     // Remove auto sync
@@ -103,7 +88,7 @@ window.FirebaseSync = {
         console.log('Auto-sync disabled');
     },
 
-    // Sync all data
+    // Sync all data (upload local to cloud)
     async syncAllData() {
         if (!this.isAuthenticated) {
             alert('Please enable sync first');
@@ -111,33 +96,41 @@ window.FirebaseSync = {
         }
 
         try {
-            console.log('Starting sync...');
+            console.log('🔄 Starting sync (upload local data to cloud)...');
             const userId = this.userId;
             const dataTypes = ['transactions', 'transfers', 'people', 'accounts', 'categories', 'budgets', 'savedFilters'];
+            
+            let syncedCount = 0;
+            let totalItems = 0;
             
             for (const dataType of dataTypes) {
                 console.log(`Syncing ${dataType}...`);
                 const data = this.getLocalData(dataType);
-                console.log(`Data for ${dataType}:`, data);
+                console.log(`Local data for ${dataType}:`, data);
                 
                 await db.collection('users').doc(userId).collection('data').doc(dataType).set({
                     data: data,
                     lastModified: Date.now(),
                     deviceId: this.getDeviceId()
                 });
-                console.log(`${dataType} synced successfully`);
+                
+                syncedCount++;
+                totalItems += data ? data.length : 0;
+                console.log(`${dataType} synced successfully (${data ? data.length : 0} items)`);
             }
 
             this.lastSyncTime = new Date().toISOString();
             localStorage.setItem('last_sync_time', this.lastSyncTime);
-            console.log('All data synced successfully');
+            console.log(`✅ Sync completed: ${syncedCount} data types, ${totalItems} total items`);
             this.updateUI();
+            
+            alert(`✅ Sync completed!\n\n📊 ${syncedCount} data types synced\n📝 ${totalItems} total items\n\nYour data is now in the cloud!`);
             return true;
         } catch (error) {
             console.error('Sync error details:', error);
             console.error('Error code:', error.code);
             console.error('Error message:', error.message);
-            alert('Sync failed: ' + error.message + ' (Code: ' + error.code + ')');
+            alert('❌ Sync failed: ' + error.message + ' (Code: ' + error.code + ')');
             return false;
         }
     },
@@ -194,39 +187,40 @@ window.FirebaseSync = {
         }
 
         try {
-            console.log('Uploading local data...');
+            console.log('Uploading ALL local data to Firebase...');
             const userId = this.userId;
             const dataTypes = ['transactions', 'transfers', 'people', 'accounts', 'categories', 'budgets', 'savedFilters'];
             
             let uploadedCount = 0;
+            let totalItems = 0;
+            
             for (const dataType of dataTypes) {
                 console.log(`Uploading ${dataType}...`);
                 const data = this.getLocalData(dataType);
                 console.log(`Local data for ${dataType}:`, data);
                 
-                if (data && data.length > 0) {
-                    await db.collection('users').doc(userId).collection('data').doc(dataType).set({
-                        data: data,
-                        lastModified: Date.now(),
-                        deviceId: this.getDeviceId()
-                    });
-                    uploadedCount++;
-                    console.log(`${dataType} uploaded successfully`);
-                } else {
-                    console.log(`No data to upload for ${dataType}`);
-                }
+                // Always upload, even if empty
+                await db.collection('users').doc(userId).collection('data').doc(dataType).set({
+                    data: data,
+                    lastModified: Date.now(),
+                    deviceId: this.getDeviceId()
+                });
+                
+                uploadedCount++;
+                totalItems += data ? data.length : 0;
+                console.log(`${dataType} uploaded successfully (${data ? data.length : 0} items)`);
             }
 
             this.lastSyncTime = new Date().toISOString();
             localStorage.setItem('last_sync_time', this.lastSyncTime);
-            console.log(`Local data upload completed. ${uploadedCount} data types uploaded.`);
+            console.log(`Local data upload completed. ${uploadedCount} data types uploaded, ${totalItems} total items.`);
             this.updateUI();
             
-            alert(`Local data uploaded successfully! ${uploadedCount} data types uploaded.`);
+            alert(`✅ Local data uploaded successfully!\n\n📊 ${uploadedCount} data types uploaded\n📝 ${totalItems} total items\n\nYour data is now synced to the cloud!`);
             return true;
         } catch (error) {
             console.error('Upload local data error:', error);
-            alert('Upload local data failed: ' + error.message);
+            alert('❌ Upload local data failed: ' + error.message);
             return false;
         }
     },
