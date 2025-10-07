@@ -71,6 +71,19 @@ function initializeSyncUI() {
         });
     }
 
+    const setSharedIdBtn = document.getElementById('setSharedIdBtn');
+    if (setSharedIdBtn) {
+        setSharedIdBtn.addEventListener('click', () => {
+            const currentId = localStorage.getItem('shared_user_id') || 'financial_planner_shared_user';
+            const newId = prompt('Enter shared user ID (same on all devices):', currentId);
+            if (newId && newId.trim()) {
+                localStorage.setItem('shared_user_id', newId.trim());
+                alert('Shared ID updated! Please refresh the page.');
+                location.reload();
+            }
+        });
+    }
+
     // Update sync status periodically
     setInterval(() => {
         if (window.FirebaseSync) {

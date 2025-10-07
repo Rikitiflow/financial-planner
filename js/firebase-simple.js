@@ -31,8 +31,10 @@ window.FirebaseSync = {
             auth.onAuthStateChanged((user) => {
                 if (user) {
                     this.isAuthenticated = true;
-                    this.userId = user.uid;
+                    // Use a shared user ID for all devices
+                    this.userId = this.getSharedUserId();
                     console.log('User authenticated: ' + user.uid);
+                    console.log('Using shared ID: ' + this.userId);
                     this.updateUI();
                 } else {
                     this.isAuthenticated = false;
@@ -47,6 +49,17 @@ window.FirebaseSync = {
         } catch (error) {
             console.error('Firebase auth error: ' + error.message);
         }
+    },
+
+    // Get shared user ID for all devices
+    getSharedUserId() {
+        let sharedId = localStorage.getItem('shared_user_id');
+        if (!sharedId) {
+            // Create a shared ID based on a fixed string
+            sharedId = 'financial_planner_shared_user';
+            localStorage.setItem('shared_user_id', sharedId);
+        }
+        return sharedId;
     },
 
     // Enable/disable sync
