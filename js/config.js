@@ -93,10 +93,10 @@ const Utils = {
 
     formatCurrency: (amount) => {
         const numAmount = parseFloat(amount);
-        if (isNaN(numAmount)) return '€0.00';
+        if (isNaN(numAmount)) return '0.00 EUR';
         
         const formatted = numAmount.toFixed(2);
-        return '€' + formatted;
+        return formatted + ' EUR';
     },
 
     formatDate: (date) => {
