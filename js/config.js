@@ -107,3 +107,7 @@ const Utils = {
 };
 
 console.log('✅ Config loaded successfully');
+console.log('Utils available:', typeof Utils !== 'undefined');
+if (typeof Utils !== 'undefined') {
+    console.log('formatCurrency test:', Utils.formatCurrency(123.45));
+}
