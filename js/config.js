@@ -92,11 +92,9 @@ const Utils = {
     },
 
     formatCurrency: (amount) => {
-        // Simple and reliable currency formatting
         const numAmount = parseFloat(amount);
         if (isNaN(numAmount)) return '€0.00';
         
-        // Format with 2 decimal places and add € symbol
         const formatted = numAmount.toFixed(2);
         return '€' + formatted;
     },
@@ -107,11 +105,3 @@ const Utils = {
 };
 
 console.log('✅ Config loaded successfully');
-console.log('Utils available:', typeof Utils !== 'undefined');
-if (typeof Utils !== 'undefined') {
-    console.log('formatCurrency test:', Utils.formatCurrency(123.45));
-    // Test direct euro symbol
-    console.log('Direct euro test: €123.45');
-} else {
-    console.error('Utils not available - check if js/config.js is loaded');
-}
